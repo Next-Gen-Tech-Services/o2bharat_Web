@@ -1,0 +1,187 @@
+/* ============================================
+   TAILWIND
+============================================ */
+
+@import "tailwindcss";
+
+/* ============================================
+   SWARN SAMAJ — THEME VARIABLES
+============================================ */
+
+:root {
+
+  /* MAIN PALETTE */
+  --maroon:        #5c1a1a;
+  --maroon-mid:    #7a2424;
+  --maroon-light:  #9e3a2a;
+
+  --gold:          #c8881a;
+  --gold-bright:   #e8a832;
+  --gold-glow:     #f5c842;
+  --gold-pale:     #fdf0d0;
+
+  --cream:         #fdf8f0;
+  --cream-dark:    #f5ead8;
+
+  /* TEXT */
+  --text-dark:    #3a1a0a;
+  --text-mid:     #6b3520;
+  --text-muted:   #a06040;
+  --text-on-dark: #fdf0d0;
+  --text-dim:     rgba(253,240,208,0.55);
+
+  /* GRADIENTS */
+  --grad-hero:    linear-gradient(150deg,#5c1a1a 0%,#7a2828 45%,#a04020 75%,#c8881a 100%);
+  --grad-dark:    linear-gradient(160deg,#4a1212,#6b2020);
+  --grad-light:   linear-gradient(160deg,#fdf8f0,#f5ead8);
+  --grad-gold:    linear-gradient(135deg,#c8881a,#e8a832,#f5c842);
+  --grad-button:  linear-gradient(135deg,#c8881a,#e8a832);
+
+  /* SHADOWS */
+  --shadow-gold: 0 8px 40px rgba(200,136,26,0.35);
+  --shadow-card: 0 4px 24px rgba(92,26,26,0.1);
+  --glow-gold:   0 0 40px rgba(232,168,50,0.4);
+
+  /* RADIUS */
+  --radius: 16px;
+  --radius-lg: 24px;
+}
+
+/* ============================================
+   GLOBAL RESET
+============================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  overflow-x: hidden;
+}
+
+/* ============================================
+   FONTS
+============================================ */
+
+h1, h2, h3, h4 {
+  font-family: 'Outfit', sans-serif;
+}
+
+.hindi {
+  font-family: 'Tiro Devanagari Hindi', serif;
+}
+
+.yatra {
+  font-family: 'Yatra One', cursive;
+}
+
+/* ============================================
+   SCROLLBAR
+============================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 3px;
+}
+
+/* ============================================
+   ANIMATIONS
+============================================ */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(200,136,26,0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(200,136,26,0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(200,136,26,0);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer-text {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+============================================ */
+
+.animate-fadeUp {
+  animation: fadeUp 0.7s ease forwards;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* flip card helpers */
+.perspective {
+  perspective: 1200px;
+}
+
+.flip-card {
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+}
+
+.group:hover .flip-card {
+  transform: rotateY(180deg);
+}
+
+.flip-face {
+  backface-visibility: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.flip-back {
+  transform: rotateY(180deg);
+}

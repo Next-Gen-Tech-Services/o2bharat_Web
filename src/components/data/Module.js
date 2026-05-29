@@ -36,6 +36,16 @@ export const modules = [
   color: "#1f7a8c",
   badge: "COMING",
 },
+{
+  id: 14,
+  icon: FiUsers, // or FiHome if you want a family-oriented icon
+  title: "Family Directory",
+  titleHi: "परिवार निर्देशिका",
+  desc: "Create and manage family trees, connect relatives, and preserve family information across generations.",
+  descHi: "परिवार वृक्ष बनाएं, रिश्तेदारों से जुड़ें और पीढ़ियों तक पारिवारिक जानकारी सुरक्षित रखें।",
+  color: "#7a5c3e",
+  badge: "COMING",
+},
   {
     id: 2,
     icon: FiHome,
@@ -126,16 +136,16 @@ export const modules = [
     color: "#8a4a2e",
     badge: "COMING",
   },
-  {
-    id: 11,
-    icon: FiTarget,
-    title: "Clubs",
-    titleHi: "क्लब",
-    desc: "Professional clubs for different groups.",
-    descHi: "पेशेवर क्लब।",
-    color: "#2e8a6e",
-    badge: "COMING",
-  },
+  // {
+  //   id: 11,
+  //   icon: FiTarget,
+  //   title: "Clubs",
+  //   titleHi: "क्लब",
+  //   desc: "Professional clubs for different groups.",
+  //   descHi: "पेशेवर क्लब।",
+  //   color: "#2e8a6e",
+  //   badge: "COMING",
+  // },
   // {
   //   id: 12,
   //   icon: FiBarChart2,

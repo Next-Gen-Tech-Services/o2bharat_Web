@@ -86,7 +86,7 @@ export default function RequestModal({ isOpen, onClose }) {
           <input
             type="text"
             name="subject"
-            placeholder="Subject"
+            placeholder="Request Detail"
             required
             value={formData.subject}
             onChange={handleChange}

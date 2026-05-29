@@ -198,7 +198,7 @@ items-center
 
           <h2 className="text-[28px] md:text-[clamp(34px,4vw,52px)] text-[#0A2A66] mb-5 leading-[1.2]">
             One App For <br />
-            <span className="text-[#138808]"> FOR COMMUNITIES</span>
+            <span className="text-[#138808]"> ALL COMMUNITIES</span>
           </h2>
 
           <p className="hindi text-[15px] md:text-[17px] text-[#0A2A66] leading-[1.9] mb-9 max-w-[520px]">

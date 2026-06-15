@@ -53,7 +53,7 @@ const HeroSection = () => {
         </h1>
 
         <h2 className="text-[clamp(18px,3vw,28px)] text-[#0A2A66] tracking-[4px] mb-7">
-          DIGITAL PLATFORM FOR COMMUNITIES for
+          DIGITAL PLATFORM FOR COMMUNITIES
         </h2>
 
         <p className="hindi text-[clamp(14px,2vw,18px)] text-[#0A2A66] leading-[1.8] max-w-[640px] mx-auto mb-5">

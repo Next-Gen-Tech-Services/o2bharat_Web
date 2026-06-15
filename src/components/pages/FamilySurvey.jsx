@@ -271,9 +271,9 @@ const FamilySurvey = () => {
             ) {
                 toast.success("Survey submitted successfully");
 
-                // setTimeout(() => {
-                //     navigate("/");
-                // }, 1500);
+                 setTimeout(() => {
+                     navigate("/");
+                 }, 1500);
             } else {
                 toast.error(
                     response?.data?.message || "Failed to submit survey"

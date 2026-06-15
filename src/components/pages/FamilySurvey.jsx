@@ -177,7 +177,42 @@ const FamilySurvey = () => {
         try {
             setIsSubmitting(true);
 
+            const stateCode =
+                selectedState?.isoCode?.toLowerCase() || "";
+
+            const cityCode = surveyDetails.city
+                ?.trim()
+                .substring(0, 2)
+                .toLowerCase();
+
+            const nameParts = familyHead.name
+                ?.trim()
+                .split(/\s+/)
+                .filter(Boolean);
+
+            let headNameCode = "";
+
+            if (nameParts.length === 1) {
+                headNameCode = nameParts[0]
+                    .substring(0, 2)
+                    .toLowerCase();
+            } else {
+                headNameCode = nameParts
+                    .map(word => word[0])
+                    .join("")
+                    .substring(0, 2)
+                    .toLowerCase();
+            }
+
+            const casteCode = familyHead.caste
+                ?.trim()
+                .substring(0, 2)
+                .toLowerCase();
+
+            const familyName = `fp-${stateCode}-${cityCode}-${headNameCode}-${casteCode}`;
+
             const payload = {
+                familyName,
                 surveyorName: surveyDetails.surveyorName,
                 city: surveyDetails.city,
                 state: surveyDetails.state,

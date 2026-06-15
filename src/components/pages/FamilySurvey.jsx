@@ -209,10 +209,10 @@ const FamilySurvey = () => {
                 .substring(0, 2)
                 .toLowerCase();
 
-            const familyName = `fp-${stateCode}-${cityCode}-${headNameCode}-${casteCode}`;
+            const familyNumber = `fp-${stateCode}-${cityCode}-${headNameCode}-${casteCode}`;
 
             const payload = {
-                familyName,
+                familyNumber,
                 surveyorName: surveyDetails.surveyorName,
                 city: surveyDetails.city,
                 state: surveyDetails.state,
@@ -232,6 +232,7 @@ const FamilySurvey = () => {
                 headDob: familyHead.dob,
                 headAge: Number(familyHead.age) || 0,
                 headMobile: familyHead.mobile,
+                headEmail: familyHead.email,
                 headNativePlace: familyHead.nativePlace,
                 headEducation: familyHead.education,
                 headOccupation: familyHead.occupation,
@@ -248,7 +249,7 @@ const FamilySurvey = () => {
 
                     dob: member.dob,
 
-                    age: 0,
+                    age: Number(member.age) || 0,
 
                     maritalStatus:
                         member.maritalStatus || "NEVER_MARRIED",
@@ -270,9 +271,9 @@ const FamilySurvey = () => {
             ) {
                 toast.success("Survey submitted successfully");
 
-                setTimeout(() => {
-                    navigate("/");
-                }, 1500);
+                // setTimeout(() => {
+                //     navigate("/");
+                // }, 1500);
             } else {
                 toast.error(
                     response?.data?.message || "Failed to submit survey"

@@ -37,11 +37,6 @@ const FamilySurvey = () => {
     });
 
     const [socialInfo, setSocialInfo] = useState({
-        hasSeniorCitizen: false,
-        seniorCitizenDetails: "",
-
-        hasWidow: false,
-        widowDetails: "",
 
         hasDisabledPerson: false,
         disabledPersonDetails: "",
@@ -51,6 +46,8 @@ const FamilySurvey = () => {
 
         participatesCommunity: false,
         communityDetails: "",
+
+        thoughts: "",
     });
 
     const [errors, setErrors] = useState({});
@@ -103,6 +100,28 @@ const FamilySurvey = () => {
         setMembers(
             members.filter((_, index) => index !== indexToRemove)
         );
+    };
+
+    const calculateAge = (dob) => {
+        if (!dob) return "";
+
+        const birthDate = new Date(dob);
+        const today = new Date();
+
+        let age = today.getFullYear() - birthDate.getFullYear();
+
+        const monthDiff =
+            today.getMonth() - birthDate.getMonth();
+
+        if (
+            monthDiff < 0 ||
+            (monthDiff === 0 &&
+                today.getDate() < birthDate.getDate())
+        ) {
+            age--;
+        }
+
+        return age >= 0 ? age.toString() : "";
     };
 
     const validateStep1 = () => {
@@ -193,7 +212,6 @@ const FamilySurvey = () => {
                 "maritalStatus",
                 "education",
                 "occupation",
-                "mobile",
                 "relation",
             ];
 
@@ -213,6 +231,16 @@ const FamilySurvey = () => {
                 );
                 return false;
             }
+
+            if (
+                member.mobile &&
+                !/^[6-9]\d{9}$/.test(member.mobile)
+            ) {
+                setFormError(
+                    "Please enter a valid 10 digit mobile number."
+                );
+                return false;
+            }
         }
 
         setFormError("");
@@ -221,16 +249,6 @@ const FamilySurvey = () => {
 
     const validateSocialInfo = () => {
         const checks = [
-            {
-                flag: socialInfo.hasSeniorCitizen,
-                value: socialInfo.seniorCitizenDetails,
-                label: "senior citizen"
-            },
-            {
-                flag: socialInfo.hasWidow,
-                value: socialInfo.widowDetails,
-                label: "widow"
-            },
             {
                 flag: socialInfo.hasDisabledPerson,
                 value: socialInfo.disabledPersonDetails,
@@ -690,12 +708,15 @@ const FamilySurvey = () => {
                                 <label className={labelClass}>Date of Birth</label>
                                 <input
                                     value={familyHead.dob}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                        const dob = e.target.value;
+
                                         setFamilyHead({
                                             ...familyHead,
-                                            dob: e.target.value
-                                        })
-                                    }
+                                            dob,
+                                            age: calculateAge(dob),
+                                        });
+                                    }}
                                     type="date"
                                     max={new Date().toISOString().split("T")[0]}
                                     className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
@@ -708,6 +729,7 @@ const FamilySurvey = () => {
                                     inputMode="numeric"
                                     maxLength={3}
                                     value={familyHead.age}
+                                    readOnly={!!familyHead.dob}
                                     onChange={(e) => {
                                         const value = e.target.value.replace(/\D/g, "");
 
@@ -901,7 +923,12 @@ const FamilySurvey = () => {
                                         value={m.dob}
                                         onChange={(e) => {
                                             const updated = [...members];
+
                                             updated[index].dob = e.target.value;
+                                            updated[index].age = calculateAge(
+                                                e.target.value
+                                            );
+
                                             setMembers(updated);
                                         }}
                                         className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
@@ -915,6 +942,7 @@ const FamilySurvey = () => {
                                         inputMode="numeric"
                                         maxLength={3}
                                         value={m.age}
+                                        readOnly={!!m.dob}
                                         onChange={(e) => {
                                             const value = e.target.value.replace(/\D/g, "");
 
@@ -1014,18 +1042,6 @@ const FamilySurvey = () => {
 
                             {[
                                 {
-                                    label: "Senior Citizen In Family",
-                                    key: "hasSeniorCitizen",
-                                    detailKey: "seniorCitizenDetails",
-                                    placeholder: "Who is the senior citizen?"
-                                },
-                                {
-                                    label: "Widow In Family",
-                                    key: "hasWidow",
-                                    detailKey: "widowDetails",
-                                    placeholder: "Who is the widow?"
-                                },
-                                {
                                     label: "Disabled Person In Family",
                                     key: "hasDisabledPerson",
                                     detailKey: "disabledPersonDetails",
@@ -1078,6 +1094,25 @@ const FamilySurvey = () => {
                                     )}
                                 </div>
                             ))}
+                        </div>
+
+                        <div className="mt-8">
+                            <label className={labelClass}>
+                                Share Your Thoughts
+                            </label>
+
+                            <textarea
+                                rows={4}
+                                value={socialInfo.thoughts}
+                                onChange={(e) =>
+                                    setSocialInfo({
+                                        ...socialInfo,
+                                        thoughts: e.target.value,
+                                    })
+                                }
+                                placeholder="Share your thoughts, suggestions, or feedback"
+                                className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
+                            />
                         </div>
 
                         <div

@@ -37,11 +37,6 @@ const FamilySurveyHindi = () => {
     });
 
     const [socialInfo, setSocialInfo] = useState({
-        hasSeniorCitizen: false,
-        seniorCitizenDetails: "",
-
-        hasWidow: false,
-        widowDetails: "",
 
         hasDisabledPerson: false,
         disabledPersonDetails: "",
@@ -51,6 +46,8 @@ const FamilySurveyHindi = () => {
 
         participatesCommunity: false,
         communityDetails: "",
+
+        thoughts: "",
     });
 
     const [errors, setErrors] = useState({});
@@ -103,6 +100,28 @@ const FamilySurveyHindi = () => {
         setMembers(
             members.filter((_, index) => index !== indexToRemove)
         );
+    };
+
+    const calculateAge = (dob) => {
+        if (!dob) return "";
+
+        const birthDate = new Date(dob);
+        const today = new Date();
+
+        let age = today.getFullYear() - birthDate.getFullYear();
+
+        const monthDiff =
+            today.getMonth() - birthDate.getMonth();
+
+        if (
+            monthDiff < 0 ||
+            (monthDiff === 0 &&
+                today.getDate() < birthDate.getDate())
+        ) {
+            age--;
+        }
+
+        return age >= 0 ? age.toString() : "";
     };
 
     const validateStep1 = () => {
@@ -193,7 +212,6 @@ const FamilySurveyHindi = () => {
                 "maritalStatus",
                 "education",
                 "occupation",
-                "mobile",
                 "relation",
             ];
 
@@ -213,6 +231,16 @@ const FamilySurveyHindi = () => {
                 );
                 return false;
             }
+
+            if (
+                member.mobile &&
+                !/^[6-9]\d{9}$/.test(member.mobile)
+            ) {
+                setFormError(
+                    "Please enter a valid 10 digit mobile number."
+                );
+                return false;
+            }
         }
 
         setFormError("");
@@ -221,16 +249,6 @@ const FamilySurveyHindi = () => {
 
     const validateSocialInfo = () => {
         const checks = [
-            {
-                flag: socialInfo.hasSeniorCitizen,
-                value: socialInfo.seniorCitizenDetails,
-                label: "senior citizen"
-            },
-            {
-                flag: socialInfo.hasWidow,
-                value: socialInfo.widowDetails,
-                label: "widow"
-            },
             {
                 flag: socialInfo.hasDisabledPerson,
                 value: socialInfo.disabledPersonDetails,
@@ -615,7 +633,7 @@ const FamilySurveyHindi = () => {
                         <div className="text-right">
                             <button
                                 onClick={() => {
-                                    if (validateStep1()) {
+                                    if (validateStep1() || true) {
                                         setFormError("");
                                         setStep(2);
                                     }
@@ -717,12 +735,15 @@ const FamilySurveyHindi = () => {
                                 <label className={labelClass}>जन्म तिथि</label>
                                 <input
                                     value={familyHead.dob}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                        const dob = e.target.value;
+
                                         setFamilyHead({
                                             ...familyHead,
-                                            dob: e.target.value
-                                        })
-                                    }
+                                            dob,
+                                            age: calculateAge(dob),
+                                        });
+                                    }}
                                     type="date"
                                     max={new Date().toISOString().split("T")[0]}
                                     className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
@@ -735,6 +756,7 @@ const FamilySurveyHindi = () => {
                                     inputMode="numeric"
                                     maxLength={3}
                                     value={familyHead.age}
+                                    readOnly={!!familyHead.dob}
                                     onChange={(e) => {
                                         const value = e.target.value.replace(/\D/g, "");
 
@@ -843,7 +865,7 @@ const FamilySurveyHindi = () => {
 
                             <button
                                 onClick={() => {
-                                    if (validateStep2()) {
+                                    if (validateStep2() || true) {
                                         setFormError("");
                                         setStep(3);
                                     }
@@ -931,6 +953,9 @@ const FamilySurveyHindi = () => {
                                         onChange={(e) => {
                                             const updated = [...members];
                                             updated[index].dob = e.target.value;
+                                            updated[index].age = calculateAge(
+                                                e.target.value
+                                            );
                                             setMembers(updated);
                                         }}
                                         className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
@@ -944,6 +969,7 @@ const FamilySurveyHindi = () => {
                                         inputMode="numeric"
                                         maxLength={3}
                                         value={m.age}
+                                        readOnly={!!m.dob}
                                         onChange={(e) => {
                                             const value = e.target.value.replace(/\D/g, "");
 
@@ -1011,7 +1037,7 @@ const FamilySurveyHindi = () => {
                                             updated[index].mobile = e.target.value.replace(/\D/g, "");
                                             setMembers(updated);
                                         }}
-                                      placeholder="मोबाइल नंबर दर्ज करें"
+                                        placeholder="मोबाइल नंबर दर्ज करें"
                                         className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                     />
                                 </div>
@@ -1042,18 +1068,6 @@ const FamilySurveyHindi = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
                             {[
-                                {
-                                    label: "परिवार में वरिष्ठ नागरिक",
-                                    key: "hasSeniorCitizen",
-                                    detailKey: "seniorCitizenDetails",
-                                    placeholder: "वरिष्ठ नागरिक का नाम लिखें"
-                                },
-                                {
-                                    label: "परिवार में विधवा / विधुर",
-                                    key: "hasWidow",
-                                    detailKey: "widowDetails",
-                                    placeholder: "विधवा / विधुर का नाम लिखें"
-                                },
                                 {
                                     label: "परिवार में दिव्यांग व्यक्ति",
                                     key: "hasDisabledPerson",
@@ -1108,6 +1122,26 @@ const FamilySurveyHindi = () => {
                                 </div>
                             ))}
                         </div>
+
+                        <div className="mt-8">
+                            <label className={labelClass}>
+                               अपने विचार साझा करें
+                            </label>
+
+                            <textarea
+                                rows={4}
+                                value={socialInfo.thoughts}
+                                onChange={(e) =>
+                                    setSocialInfo({
+                                        ...socialInfo,
+                                        thoughts: e.target.value,
+                                    })
+                                }
+                                placeholder="अपने विचार, सुझाव या प्रतिक्रिया लिखें"
+                                className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
+                            />
+                        </div>
+
 
                         <div
                             className="mt-8 mb-6 bg-gradient-to-r from-[#FFF8F0] to-[#F6FBF6] border border-[#FFE4C4] rounded-2xl p-5">

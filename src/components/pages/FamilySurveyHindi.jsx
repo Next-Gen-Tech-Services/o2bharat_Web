@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { State, City } from "country-state-city";
 
-const FamilySurvey = () => {
+const FamilySurveyHindi = () => {
     const [step, setStep] = useState(1);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const formApi = new FormApi();
@@ -117,7 +117,7 @@ const FamilySurvey = () => {
             }
 
             if (!value?.toString().trim()) {
-                newErrors[key] = "All fields are Required";
+                newErrors[key] = "सभी आवश्यक फ़ील्ड भरें";
             }
         });
 
@@ -125,7 +125,7 @@ const FamilySurvey = () => {
             surveyDetails.pinCode &&
             !/^\d{6}$/.test(surveyDetails.pinCode)
         ) {
-            newErrors.pinCode = "PIN Code must be 6 digits";
+            newErrors.pinCode = "पिन कोड 6 अंकों का होना चाहिए";
         }
 
         setErrors(newErrors);
@@ -149,27 +149,27 @@ const FamilySurvey = () => {
             }
 
             if (!value?.toString().trim()) {
-                newErrors[key] = "All fields are Required";
+                newErrors[key] = "सभी आवश्यक फ़ील्ड भरें";
             }
         });
 
         // Either DOB or Age is required
         if (!familyHead.dob?.trim() && !familyHead.age?.trim()) {
-            newErrors.age = "Either Age or Date of Birth is required";
+            newErrors.age = "आयु या जन्म तिथि में से कोई एक भरना आवश्यक है";
         }
 
         if (
             familyHead.mobile &&
             !/^[6-9]\d{9}$/.test(familyHead.mobile)
         ) {
-            newErrors.mobile = "Enter a valid 10 digit mobile number";
+            newErrors.mobile = "मान्य 10 अंकों का मोबाइल नंबर दर्ज करें";
         }
 
         if (
             familyHead.email &&
             !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(familyHead.email)
         ) {
-            newErrors.email = "Enter a valid email address";
+            newErrors.email = "मान्य ईमेल पता दर्ज करें";
         }
 
         setErrors(newErrors);
@@ -200,7 +200,7 @@ const FamilySurvey = () => {
             for (const field of requiredFields) {
                 if (!member[field]?.toString().trim()) {
                     setFormError(
-                        "Please complete all family member fields."
+                        "कृपया सभी सदस्य विवरण भरें"
                     );
                     return false;
                 }
@@ -356,7 +356,7 @@ const FamilySurvey = () => {
                 response?.success ||
                 response?.data?.status === "Success"
             ) {
-                toast.success("Survey submitted successfully");
+                toast.success("सर्वे सफलतापूर्वक जमा हो गया");
 
                 setTimeout(() => {
                     navigate("/");
@@ -368,10 +368,37 @@ const FamilySurvey = () => {
             }
         } catch (error) {
             console.error(error);
-            toast.error("Something went wrong");
+            toast.error("कुछ त्रुटि हुई है");
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const hindi = {
+        title: "पारिवारिक सर्वेक्षण",
+        subtitle: "एक मजबूत और जुड़ा हुआ समाज बनाने में हमारी सहायता करें।",
+
+        survey: "सर्वे विवरण",
+        head: "परिवार प्रमुख",
+        members: "सदस्य",
+
+        state: "राज्य",
+        city: "शहर",
+        ward: "वार्ड / क्षेत्र",
+        pinCode: "पिन कोड",
+        surveyor: "सर्वेक्षक का नाम",
+
+        next: "आगे बढ़ें",
+        back: "वापस",
+
+        yes: "हाँ",
+        no: "नहीं",
+
+        male: "पुरुष",
+        female: "महिला",
+
+        submit: "सर्वे जमा करें",
+        submitting: "जमा किया जा रहा है...",
     };
 
     const labelClass =
@@ -391,15 +418,15 @@ const FamilySurvey = () => {
                         color: "#0A2A66"
                     }}
                 >
-                    O2Bharat Community Survey
+                    O2Bharat सामुदायिक सर्वेक्षण
                 </div>
 
                 <h1 className="text-3xl md:text-5xl font-black text-[#0A2A66]">
-                    Family Survey
+                    पारिवारिक सर्वेक्षण
                 </h1>
 
                 <p className="text-sm md:text-base text-gray-500 mt-3 px-4">
-                    Help us build a stronger and more connected community.
+                    एक मजबूत और जुड़े हुए समाज के निर्माण में हमारी सहायता करें।
                 </p>
             </div>
             <div className="max-w-6xl mx-auto bg-white/80 backdrop-blur-xl rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-white p-4 md:p-8">
@@ -421,9 +448,9 @@ const FamilySurvey = () => {
                         </div>
 
                         {[
-                            "Survey",
-                            "Head",
-                            "Members"
+                            "सर्वे",
+                            "प्रमुख",
+                            "सदस्य"
                         ].map((label, index) => (
                             <div
                                 key={label}
@@ -468,7 +495,7 @@ const FamilySurvey = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                             <div>
-                                <label className={labelClass}>State</label>
+                                <label className={labelClass}>राज्य</label>
                                 <select
                                     value={surveyDetails.state}
                                     onChange={(e) =>
@@ -480,7 +507,7 @@ const FamilySurvey = () => {
                                     }
                                     className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                 >
-                                    <option value="">Select State</option>
+                                    <option value="">राज्य चुनें</option>
 
                                     {indiaStates.map((state) => (
                                         <option key={state.isoCode} value={state.name}>
@@ -490,7 +517,7 @@ const FamilySurvey = () => {
                                 </select>
                             </div>
                             <div>
-                                <label className={labelClass}>City</label>
+                                <label className={labelClass}>शहर</label>
                                 <select
                                     value={surveyDetails.city}
                                     disabled={!surveyDetails.state}
@@ -504,8 +531,8 @@ const FamilySurvey = () => {
                                 >
                                     <option value="">
                                         {surveyDetails.state
-                                            ? "Select City"
-                                            : "Select State First"}
+                                            ? "शहर चुनें"
+                                            : "पहले राज्य चुनें"}
                                     </option>
 
                                     {cities.map((city) => (
@@ -517,7 +544,7 @@ const FamilySurvey = () => {
                             </div>
 
                             <div>
-                                <label className={labelClass}>Ward / Area</label>
+                                <label className={labelClass}>वार्ड / क्षेत्र</label>
                                 <input
                                     value={surveyDetails.ward}
                                     onChange={(e) =>
@@ -526,13 +553,13 @@ const FamilySurvey = () => {
                                             ward: e.target.value
                                         })
                                     }
-                                    placeholder="Enter Ward / Area"
+                                    placeholder="वार्ड / क्षेत्र दर्ज करें"
                                     className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                 />
                             </div>
 
                             <div>
-                                <label className={labelClass}>PIN Code</label>
+                                <label className={labelClass}>पिन कोड</label>
                                 <input
                                     type="text"
                                     inputMode="numeric"
@@ -544,14 +571,14 @@ const FamilySurvey = () => {
                                             pinCode: e.target.value.replace(/\D/g, "")
                                         })
                                     }
-                                    placeholder="Enter PIN Code"
+                                    placeholder="पिन कोड दर्ज करें"
                                     className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className={labelClass}>Surveyor Name</label>
+                            <label className={labelClass}>सर्वेक्षक का नाम (वैकल्पिक)</label>
                             <select
                                 value={surveyDetails.surveyorName}
                                 onChange={(e) =>
@@ -561,10 +588,10 @@ const FamilySurvey = () => {
                                     })
                                 }
                                 className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
-                                <option value="">Select Surveyor Name</option>
-                                <option value="AJMER">Ajmer</option>
-                                <option value="AMIT VERMA">Amit Verma</option>
-                                <option value="SURESH GUPTA">Suresh Gupta</option>
+                                <option value="">सर्वेक्षक चुनें</option>
+                                <option value="AJMER">अजमेर</option>
+                                <option value="AMIT VERMA">अमित वर्मा</option>
+                                <option value="SURESH GUPTA">सुरेश गुप्ता</option>
                             </select>
                         </div>
 
@@ -599,7 +626,7 @@ const FamilySurvey = () => {
                                         "linear-gradient(135deg,#FF9933,#138808)"
                                 }}
                             >
-                                Next
+                                आगे बढ़ें
                             </button>
                         </div>
                     </div>
@@ -613,7 +640,7 @@ const FamilySurvey = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
                             <div>
-                                <label className={labelClass}>Family Head Name</label>
+                                <label className={labelClass}>परिवार प्रमुख का नाम</label>
                                 <input
                                     value={familyHead.name}
                                     onChange={(e) =>
@@ -622,12 +649,12 @@ const FamilySurvey = () => {
                                             name: e.target.value
                                         })
                                     }
-                                    placeholder="Enter Family Head Name"
+                                    placeholder="परिवार प्रमुख का नाम दर्ज करें"
                                     className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
                             </div>
 
                             <div>
-                                <label className={labelClass}>Gender</label>
+                                <label className={labelClass}>लिंग</label>
                                 <select
                                     value={familyHead.gender}
                                     onChange={(e) =>
@@ -638,15 +665,15 @@ const FamilySurvey = () => {
                                     }
                                     className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
 
-                                    <option value="">Select Gender</option>
-                                    <option value="MALE">Male</option>
-                                    <option value="FEMALE">Female</option>
+                                    <option value="">लिंग चुनें</option>
+                                    <option value="MALE">पुरुष</option>
+                                    <option value="FEMALE">महिला</option>
                                     {/* <option value="OTHER">Other</option> */}
                                 </select>
                             </div>
 
                             <div>
-                                <label className={labelClass}>Father / Husband Name</label>
+                                <label className={labelClass}>पिता / पति का नाम</label>
                                 <input
                                     value={familyHead.fatherName}
                                     onChange={(e) =>
@@ -655,12 +682,12 @@ const FamilySurvey = () => {
                                             fatherName: e.target.value
                                         })
                                     }
-                                    placeholder="Enter Father / Husband Name"
+                                    placeholder="पिता / पति का नाम दर्ज करें"
                                     className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
                             </div>
 
                             <div>
-                                <label className={labelClass}>Caste</label>
+                                <label className={labelClass}>जाति</label>
                                 <input
                                     value={familyHead.caste}
                                     onChange={(e) =>
@@ -669,12 +696,12 @@ const FamilySurvey = () => {
                                             caste: e.target.value
                                         })
                                     }
-                                    placeholder="Enter Caste"
+                                    placeholder="जाति दर्ज करें"
                                     className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
                             </div>
 
                             <div>
-                                <label className={labelClass}>Education</label>
+                                <label className={labelClass}>शिक्षा</label>
                                 <input
                                     value={familyHead.education}
                                     onChange={(e) =>
@@ -683,11 +710,11 @@ const FamilySurvey = () => {
                                             education: e.target.value
                                         })
                                     }
-                                    placeholder="Enter Education"
+                                    placeholder="शिक्षा दर्ज करें"
                                     className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
                             </div>
                             <div>
-                                <label className={labelClass}>Date of Birth</label>
+                                <label className={labelClass}>जन्म तिथि</label>
                                 <input
                                     value={familyHead.dob}
                                     onChange={(e) =>
@@ -702,7 +729,7 @@ const FamilySurvey = () => {
                             </div>
 
                             <div>
-                                <label className={labelClass}>Age</label>
+                                <label className={labelClass}>आयु</label>
                                 <input
                                     type="text"
                                     inputMode="numeric"
@@ -718,13 +745,13 @@ const FamilySurvey = () => {
                                             });
                                         }
                                     }}
-                                    placeholder="Enter Age"
+                                    placeholder="आयु दर्ज करें"
                                     className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                 />
                             </div>
 
                             <div>
-                                <label className={labelClass}>Occupation</label>
+                                <label className={labelClass}>व्यवसाय</label>
                                 <input
                                     value={familyHead.occupation}
                                     onChange={(e) =>
@@ -733,12 +760,12 @@ const FamilySurvey = () => {
                                             occupation: e.target.value
                                         })
                                     }
-                                    placeholder="Enter Occupation"
+                                    placeholder="व्यवसाय दर्ज करें"
                                     className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
                             </div>
 
                             <div>
-                                <label className={labelClass}>Mobile Number</label>
+                                <label className={labelClass}>मोबाइल नंबर</label>
                                 <input
                                     type="text"
                                     inputMode="numeric"
@@ -750,13 +777,13 @@ const FamilySurvey = () => {
                                             mobile: e.target.value.replace(/\D/g, "")
                                         })
                                     }
-                                    placeholder="Enter Mobile Number"
+                                    placeholder="मोबाइल नंबर दर्ज करें"
                                     className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                 />
                             </div>
 
                             <div>
-                                <label className={labelClass}>Native Place</label>
+                                <label className={labelClass}>मूल निवास</label>
                                 <input
                                     value={familyHead.nativePlace}
                                     onChange={(e) =>
@@ -765,12 +792,12 @@ const FamilySurvey = () => {
                                             nativePlace: e.target.value
                                         })
                                     }
-                                    placeholder="Enter Native Place"
+                                    placeholder="मूल निवास दर्ज करें"
                                     className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
                             </div>
 
                             <div>
-                                <label className={labelClass}>Email ID</label>
+                                <label className={labelClass}>ईमेल आईडी (वैकल्पिक)</label>
                                 <input
                                     value={familyHead.email}
                                     onChange={(e) =>
@@ -779,13 +806,13 @@ const FamilySurvey = () => {
                                             email: e.target.value
                                         })
                                     }
-                                    placeholder="Enter Email ID"
+                                    placeholder="ईमेल आईडी दर्ज करें"
                                     className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
                             </div>
                         </div>
 
                         <div>
-                            <label className={labelClass}>Current Address</label>
+                            <label className={labelClass}>वर्तमान पता</label>
                             <textarea
                                 value={familyHead.address}
                                 onChange={(e) =>
@@ -795,7 +822,7 @@ const FamilySurvey = () => {
                                     })
                                 }
                                 rows={4}
-                                placeholder="Enter Current Address"
+                                placeholder="वर्तमान पता दर्ज करें"
                                 className="border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10 w-full"
                             />
                         </div>
@@ -811,7 +838,7 @@ const FamilySurvey = () => {
                                 onClick={() => setStep(1)}
                                 className="border border-[#bec1c6] cursor-pointer rounded-2xl px-4 py-2 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                             >
-                                Back
+                                वापस
                             </button>
 
                             <button
@@ -827,7 +854,7 @@ const FamilySurvey = () => {
                                         "linear-gradient(135deg,#FF9933,#138808)"
                                 }}
                             >
-                                Next
+                                आगे बढ़ें
                             </button>
                         </div>
                     </div>
@@ -839,7 +866,7 @@ const FamilySurvey = () => {
                     <div>
 
                         <h2 className="text-2xl font-bold mb-4">
-                            Family Members
+                            परिवार के सदस्य
                         </h2>
 
                         {members.map((m, index) => (
@@ -850,7 +877,7 @@ const FamilySurvey = () => {
                                 <div className="md:col-span-4 flex flex-wrap gap-3 items-center justify-between mb-2">
 
                                     <h3 className="font-bold text-[#0A2A66] text-base md:text-lg">
-                                        Family Member #{index + 1}
+                                        सदस्य #{index + 1}
                                     </h3>
 
                                     {members.length > 1 && (
@@ -864,7 +891,7 @@ const FamilySurvey = () => {
 
                                 </div>
                                 <div>
-                                    <label className={labelClass}>Name</label>
+                                    <label className={labelClass}>नाम</label>
                                     <input
                                         value={m.name}
                                         onChange={(e) => {
@@ -872,12 +899,13 @@ const FamilySurvey = () => {
                                             updated[index].name = e.target.value;
                                             setMembers(updated);
                                         }}
-                                        placeholder="Enter Fullname"
+                                        placeholder="पूरा नाम दर्ज करें"
                                         className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10 p-2" />
                                 </div>
 
                                 <div>
-                                    <label className={labelClass}>Gender</label>
+                                    <label className={labelClass}>लिंग</label>
+
                                     <select
                                         value={m.gender}
                                         onChange={(e) => {
@@ -885,16 +913,17 @@ const FamilySurvey = () => {
                                             updated[index].gender = e.target.value;
                                             setMembers(updated);
                                         }}
-                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
-                                        <option value="">Select Gender</option>
-                                        <option value="MALE">Male</option>
-                                        <option value="FEMALE">Female</option>
-                                        {/* <option value="OTHER">Other</option> */}
+                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
+                                    >
+                                        <option value="">लिंग चुनें</option>
+                                        <option value="MALE">पुरुष</option>
+                                        <option value="FEMALE">महिला</option>
+                                        {/* <option value="OTHER">अन्य</option> */}
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label className={labelClass}>Date of Birth</label>
+                                    <label className={labelClass}>जन्म तिथि</label>
                                     <input
                                         type="date"
                                         max={new Date().toISOString().split("T")[0]}
@@ -909,7 +938,7 @@ const FamilySurvey = () => {
                                 </div>
 
                                 <div>
-                                    <label className={labelClass}>Age</label>
+                                    <label className={labelClass}>आयु</label>
                                     <input
                                         type="text"
                                         inputMode="numeric"
@@ -924,13 +953,13 @@ const FamilySurvey = () => {
                                                 setMembers(updated);
                                             }
                                         }}
-                                        placeholder="Enter Age"
+                                        placeholder="आयु दर्ज करें"
                                         className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className={labelClass}>Marital Status</label>
+                                    <label className={labelClass}>वैवाहिक स्थिति</label>
                                     <select
                                         value={m.maritalStatus}
                                         onChange={(e) => {
@@ -940,38 +969,38 @@ const FamilySurvey = () => {
                                         }}
                                         className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                     >
-                                        <option value="">Select Marital Status</option>
-                                        <option value="MARRIED">Married</option>
-                                        <option value="UNMARRIED">Unmarried</option>
-                                        <option value="WIDOW">Widow</option>
-                                        <option value="DIVORSEE">Divorsee</option>
+                                        <option value="">वैवाहिक स्थिति चुनें</option>
+                                        <option value="MARRIED">विवाहित</option>
+                                        <option value="UNMARRIED">अविवाहित</option>
+                                        <option value="WIDOW">विधवा / विधुर</option>
+                                        <option value="DIVORSEE">तलाकशुदा</option>
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label className={labelClass}>Education</label>
+                                    <label className={labelClass}>शिक्षा</label>
                                     <input value={m.education}
                                         onChange={(e) => {
                                             const updated = [...members];
                                             updated[index].education = e.target.value;
                                             setMembers(updated);
-                                        }} placeholder="Enter Education"
+                                        }} placeholder="शिक्षा दर्ज करें"
                                         className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
                                 </div>
 
                                 <div>
-                                    <label className={labelClass}>Occupation</label>
+                                    <label className={labelClass}>व्यवसाय</label>
                                     <input value={m.occupation}
                                         onChange={(e) => {
                                             const updated = [...members];
                                             updated[index].occupation = e.target.value;
                                             setMembers(updated);
-                                        }} placeholder="Enter Occupation"
+                                        }} placeholder="व्यवसाय दर्ज करें"
                                         className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
                                 </div>
 
                                 <div>
-                                    <label className={labelClass}>Mobile Number</label>
+                                    <label className={labelClass}>मोबाइल नंबर</label>
                                     <input
                                         type="text"
                                         inputMode="numeric"
@@ -982,19 +1011,19 @@ const FamilySurvey = () => {
                                             updated[index].mobile = e.target.value.replace(/\D/g, "");
                                             setMembers(updated);
                                         }}
-                                        placeholder="Enter Mobile Number"
+                                      placeholder="मोबाइल नंबर दर्ज करें"
                                         className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className={labelClass}>Relation With Head</label>
+                                    <label className={labelClass}>परिवार प्रमुख से संबंध</label>
                                     <input value={m.relation}
                                         onChange={(e) => {
                                             const updated = [...members];
                                             updated[index].relation = e.target.value;
                                             setMembers(updated);
-                                        }} placeholder="Enter Relation With Head"
+                                        }} placeholder="परिवार प्रमुख से संबंध दर्ज करें"
                                         className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
                                 </div>
                             </div>
@@ -1003,45 +1032,45 @@ const FamilySurvey = () => {
                         <button
                             onClick={addMember}
                             className=" w-full sm:w-auto mb-8 px-6 py-3 rounded-full font-semibold text-[#0A2A66] bg-[#FFF4E8]  border border-[#FFD6AA] hover:scale-105 transition">
-                            + Add Member
+                            + सदस्य जोड़ें
                         </button>
 
                         <h2 className="text-2xl font-bold mb-4">
-                            Social Information
+                            सामाजिक जानकारी
                         </h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
                             {[
                                 {
-                                    label: "Senior Citizen In Family",
+                                    label: "परिवार में वरिष्ठ नागरिक",
                                     key: "hasSeniorCitizen",
                                     detailKey: "seniorCitizenDetails",
-                                    placeholder: "Who is the senior citizen?"
+                                    placeholder: "वरिष्ठ नागरिक का नाम लिखें"
                                 },
                                 {
-                                    label: "Widow In Family",
+                                    label: "परिवार में विधवा / विधुर",
                                     key: "hasWidow",
                                     detailKey: "widowDetails",
-                                    placeholder: "Who is the widow?"
+                                    placeholder: "विधवा / विधुर का नाम लिखें"
                                 },
                                 {
-                                    label: "Disabled Person In Family",
+                                    label: "परिवार में दिव्यांग व्यक्ति",
                                     key: "hasDisabledPerson",
                                     detailKey: "disabledPersonDetails",
-                                    placeholder: "Who is the disabled person?"
+                                    placeholder: "दिव्यांग व्यक्ति का नाम लिखें"
                                 },
                                 {
-                                    label: "Marriageable Son/Daughter",
+                                    label: "विवाह योग्य पुत्र / पुत्री",
                                     key: "hasMarriageableChild",
                                     detailKey: "marriageableChildDetails",
-                                    placeholder: "Who is marriageable?"
+                                    placeholder: "विवाह योग्य सदस्य का नाम लिखें"
                                 },
                                 {
-                                    label: "Participation In Community Activities",
+                                    label: "सामुदायिक गतिविधियों में भागीदारी",
                                     key: "participatesCommunity",
                                     detailKey: "communityDetails",
-                                    placeholder: "Which activities / who participates?"
+                                    placeholder: "गतिविधि या सदस्य का नाम लिखें"
                                 },
                             ].map((item) => (
                                 <div key={item.key}>
@@ -1059,8 +1088,8 @@ const FamilySurvey = () => {
                                         }
                                         className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                     >
-                                        <option value="true">Yes</option>
-                                        <option value="false">No</option>
+                                        <option value="true">हाँ</option>
+                                        <option value="false">नहीं</option>
                                     </select>
 
                                     {socialInfo[item.key] && (
@@ -1091,8 +1120,7 @@ const FamilySurvey = () => {
                                     className="mt-1 w-5 h-5 accent-[#138808] cursor-pointer" />
 
                                 <span className="text-sm md:text-base text-[#0A2A66] font-medium leading-relaxed">
-                                    I confirm that the information provided by me is true and complete
-                                    to the best of my knowledge.
+                                    मैं पुष्टि करता / करती हूँ कि मेरे द्वारा दी गई जानकारी मेरी जानकारी के अनुसार सत्य एवं पूर्ण है।
                                 </span>
                             </label>
                         </div>
@@ -1128,10 +1156,10 @@ const FamilySurvey = () => {
                                 }}
                             >
                                 {isSubmitting
-                                    ? "Submitting..."
+                                    ? "जमा किया जा रहा है..."
                                     : isConfirmed
-                                        ? "Submit Survey"
-                                        : "Confirm & Submit"}
+                                        ? "सर्वे जमा करें"
+                                        : "पुष्टि करें और जमा करें"}
                             </button>
                         </div>
 
@@ -1142,4 +1170,4 @@ const FamilySurvey = () => {
     );
 };
 
-export default FamilySurvey;
+export default FamilySurveyHindi;

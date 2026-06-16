@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import Home from "./components/pages/Home";
 import Footer from "./components/Footer";
 import FamilySurvey from "./components/pages/FamilySurvey";
+import FamilySurveyHindi from "./components/pages/FamilySurveyHindi";
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
       <main className="pt-20">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="family-survey" element={<FamilySurvey />} />
+          <Route path="family-survey/en" element={<FamilySurvey />} />
+          <Route path="family-survey/hi" element={<FamilySurveyHindi />} />
 
         </Routes>
       </main>

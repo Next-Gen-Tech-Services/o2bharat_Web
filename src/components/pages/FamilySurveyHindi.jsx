@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaTrash } from "react-icons/fa";
 import FormApi from "../../apis/formApi/form.api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { State, City } from "country-state-city";
 
 const FamilySurveyHindi = () => {
     const [step, setStep] = useState(1);
@@ -11,6 +10,18 @@ const FamilySurveyHindi = () => {
     const formApi = new FormApi();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
+
+    const [states, setStates] = useState([]);
+    const [cities, setCities] = useState([]);
+    const [castes, setCastes] = useState([]);
+    const [educations, setEducations] = useState([]);
+    const [occupations, setOccupations] = useState([]);
+
+    const [selectedStateId, setSelectedStateId] = useState("");
+    const [selectedCityId, setSelectedCityId] = useState("");
+    const [selectedCasteId, setSelectedCasteId] = useState("");
+    const [selectedEducationId, setSelectedEducationId] = useState("");
+    const [selectedOccupationId, setSelectedOccupationId] = useState("");
 
     const [surveyDetails, setSurveyDetails] = useState({
         surveyorName: "",
@@ -26,10 +37,10 @@ const FamilySurveyHindi = () => {
         gender: "",
         fatherName: "",
         caste: "",
-        education: "",
+        educationId: "",
         dob: "",
         age: "",
-        occupation: "",
+        occupationId: "",
         mobile: "",
         nativePlace: "",
         email: "",
@@ -39,13 +50,13 @@ const FamilySurveyHindi = () => {
     const [socialInfo, setSocialInfo] = useState({
 
         hasDisabledPerson: false,
-        disabledPersonDetails: "",
+        disabledPersonName: "",
 
         hasMarriageableChild: false,
-        marriageableChildDetails: "",
+        marriageableChildName: "",
 
         participatesCommunity: false,
-        communityDetails: "",
+        communityMemberName: "",
 
         thoughts: "",
     });
@@ -60,22 +71,19 @@ const FamilySurveyHindi = () => {
             dob: "",
             age: "",
             maritalStatus: "",
-            education: "",
-            occupation: "",
+            educationId: "",
+            occupationId: "",
             mobile: "",
             relation: ""
         }
     ]);
 
-    const indiaStates = State.getStatesOfCountry("IN");
-
-    const selectedState = indiaStates.find(
-        (state) => state.name === surveyDetails.state
-    );
-
-    const cities = selectedState
-        ? City.getCitiesOfState("IN", selectedState.isoCode)
-        : [];
+    useEffect(() => {
+        fetchStates();
+        fetchCastes();
+        fetchEducations();
+        fetchOccupations();
+    }, []);
 
     const addMember = () => {
         setMembers([
@@ -86,8 +94,8 @@ const FamilySurveyHindi = () => {
                 dob: "",
                 age: "",
                 maritalStatus: "",
-                education: "",
-                occupation: "",
+                educationId: "",
+                occupationId: "",
                 mobile: "",
                 relation: ""
             }
@@ -147,6 +155,14 @@ const FamilySurveyHindi = () => {
             newErrors.pinCode = "पिन कोड 6 अंकों का होना चाहिए";
         }
 
+        if (!selectedStateId) {
+            newErrors.state = "Please select state";
+        }
+
+        if (!selectedCityId) {
+            newErrors.city = "Please select city";
+        }
+
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length > 0) {
@@ -191,6 +207,19 @@ const FamilySurveyHindi = () => {
             newErrors.email = "मान्य ईमेल पता दर्ज करें";
         }
 
+        if (!selectedCasteId) {
+            newErrors.caste = "Please select caste";
+        }
+
+        if (!selectedEducationId) {
+            newErrors.education = "Please select education";
+        }
+
+        if (!selectedOccupationId) {
+            newErrors.occupation = "Please select occupation";
+        }
+
+
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length > 0) {
@@ -219,6 +248,20 @@ const FamilySurveyHindi = () => {
                 if (!member[field]?.toString().trim()) {
                     setFormError(
                         "कृपया सभी सदस्य विवरण भरें"
+                    );
+                    return false;
+                }
+
+                if (!member.educationId) {
+                    setFormError(
+                        "Please select education for all family members."
+                    );
+                    return false;
+                }
+
+                if (!member.occupationId) {
+                    setFormError(
+                        "Please select occupation for all family members."
                     );
                     return false;
                 }
@@ -251,17 +294,17 @@ const FamilySurveyHindi = () => {
         const checks = [
             {
                 flag: socialInfo.hasDisabledPerson,
-                value: socialInfo.disabledPersonDetails,
+                value: socialInfo.disabledPersonName,
                 label: "disabled person"
             },
             {
                 flag: socialInfo.hasMarriageableChild,
-                value: socialInfo.marriageableChildDetails,
+                value: socialInfo.marriageableChildName,
                 label: "marriageable son/daughter"
             },
             {
                 flag: socialInfo.participatesCommunity,
-                value: socialInfo.communityDetails,
+                value: socialInfo.communityMemberName,
                 label: "community participation"
             }
         ];
@@ -282,8 +325,10 @@ const FamilySurveyHindi = () => {
         try {
             setIsSubmitting(true);
 
-            const stateCode =
-                selectedState?.isoCode?.toLowerCase() || "";
+            const stateCode = surveyDetails.state
+                ?.trim()
+                .substring(0, 2)
+                .toLowerCase();
 
             const cityCode = surveyDetails.city
                 ?.trim()
@@ -319,8 +364,8 @@ const FamilySurveyHindi = () => {
             const payload = {
                 familyNumber,
                 surveyorName: surveyDetails.surveyorName,
-                city: surveyDetails.city,
-                state: surveyDetails.state,
+                cityId: selectedCityId,
+                stateId: selectedStateId,
                 wardArea: surveyDetails.ward,
                 pinCode: surveyDetails.pinCode,
                 currentAddress: familyHead.address,
@@ -333,14 +378,14 @@ const FamilySurveyHindi = () => {
                         : "FEMALE",
 
                 headFatherHusbandName: familyHead.fatherName,
-                headGotra: familyHead.caste,
+                headCasteId: selectedCasteId,
                 headDob: familyHead.dob,
                 headAge: Number(familyHead.age) || 0,
                 headMobile: familyHead.mobile,
                 headEmail: familyHead.email,
                 headNativePlace: familyHead.nativePlace,
-                headEducation: familyHead.education,
-                headOccupation: familyHead.occupation,
+                headEducationId: selectedEducationId,
+                headOccupationId: selectedOccupationId,
 
                 ...socialInfo,
 
@@ -359,8 +404,8 @@ const FamilySurveyHindi = () => {
                     maritalStatus:
                         member.maritalStatus || "UNMARRIED",
 
-                    education: member.education,
-                    occupation: member.occupation,
+                    educationId: member.educationId,
+                    occupationId: member.occupationId,
                     mobileNumber: member.mobile,
                     relationWithHead: member.relation,
                 })),
@@ -389,6 +434,79 @@ const FamilySurveyHindi = () => {
             toast.error("कुछ त्रुटि हुई है");
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const fetchStates = async () => {
+        try {
+            const res = await formApi.getStates({
+                page: 1,
+                limit: 1000,
+                search: "",
+            });
+
+            console.log("stateee:: ", res);
+
+            setStates(res?.data || []);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchCities = async (stateId) => {
+        try {
+            const res = await formApi.getCities({
+                stateId,
+                page: 1,
+                limit: 1000,
+                search: "",
+            });
+
+            setCities(res?.data || []);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchCastes = async () => {
+        try {
+            const res = await formApi.getCastes({
+                page: 1,
+                limit: 1000,
+                search: "",
+            });
+
+            setCastes(res?.data || []);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchEducations = async () => {
+        try {
+            const res = await formApi.getEducation({
+                page: 1,
+                limit: 1000,
+                search: "",
+            });
+
+            setEducations(res?.data || []);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchOccupations = async () => {
+        try {
+            const res = await formApi.getOccupations({
+                page: 1,
+                limit: 1000,
+                search: "",
+            });
+
+            setOccupations(res?.data || []);
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -516,19 +634,31 @@ const FamilySurveyHindi = () => {
                                 <label className={labelClass}>राज्य</label>
                                 <select
                                     value={surveyDetails.state}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                        const selected = states.find(
+                                            (item) => item.name === e.target.value
+                                        );
+
+                                        setSelectedStateId(selected?.id || "");
+
                                         setSurveyDetails({
                                             ...surveyDetails,
-                                            state: e.target.value,
-                                            city: ""
-                                        })
-                                    }
+                                            state: selected?.name || "",
+                                            city: "",
+                                        });
+
+                                        setCities([]);
+
+                                        if (selected?.id) {
+                                            fetchCities(selected.id);
+                                        }
+                                    }}
                                     className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                 >
                                     <option value="">राज्य चुनें</option>
 
-                                    {indiaStates.map((state) => (
-                                        <option key={state.isoCode} value={state.name}>
+                                    {states.map((state) => (
+                                        <option key={state.id} value={state.name}>
                                             {state.name}
                                         </option>
                                     ))}
@@ -539,12 +669,18 @@ const FamilySurveyHindi = () => {
                                 <select
                                     value={surveyDetails.city}
                                     disabled={!surveyDetails.state}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                        const selected = cities.find(
+                                            (item) => item.name === e.target.value
+                                        );
+
+                                        setSelectedCityId(selected?.id || "");
+
                                         setSurveyDetails({
                                             ...surveyDetails,
-                                            city: e.target.value
-                                        })
-                                    }
+                                            city: selected?.name || "",
+                                        });
+                                    }}
                                     className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                 >
                                     <option value="">
@@ -554,7 +690,7 @@ const FamilySurveyHindi = () => {
                                     </option>
 
                                     {cities.map((city) => (
-                                        <option key={city.name} value={city.name}>
+                                        <option key={city.id} value={city.name}>
                                             {city.name}
                                         </option>
                                     ))}
@@ -706,30 +842,58 @@ const FamilySurveyHindi = () => {
 
                             <div>
                                 <label className={labelClass}>जाति</label>
-                                <input
+                                <select
                                     value={familyHead.caste}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                        const selected = castes.find(
+                                            (item) => item.name === e.target.value
+                                        );
+
+                                        setSelectedCasteId(selected?.id || "");
+
                                         setFamilyHead({
                                             ...familyHead,
-                                            caste: e.target.value
-                                        })
-                                    }
-                                    placeholder="जाति दर्ज करें"
-                                    className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
+                                            caste: selected?.name || "",
+                                        });
+                                    }}
+                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                >
+                                    <option value="">Select Caste</option>
+
+                                    {castes.map((caste) => (
+                                        <option key={caste.id} value={caste.name}>
+                                            {caste.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div>
                                 <label className={labelClass}>शिक्षा</label>
-                                <input
+                                <select
                                     value={familyHead.education}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                        const selected = educations.find(
+                                            (item) => item.name === e.target.value
+                                        );
+
+                                        setSelectedEducationId(selected?.id || "");
+
                                         setFamilyHead({
                                             ...familyHead,
-                                            education: e.target.value
-                                        })
-                                    }
-                                    placeholder="शिक्षा दर्ज करें"
-                                    className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
+                                            education: selected?.name || "",
+                                        });
+                                    }}
+                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                >
+                                    <option value="">Select Education</option>
+
+                                    {educations.map((education) => (
+                                        <option key={education.id} value={education.name}>
+                                            {education.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div>
                                 <label className={labelClass}>जन्म तिथि</label>
@@ -774,16 +938,30 @@ const FamilySurveyHindi = () => {
 
                             <div>
                                 <label className={labelClass}>व्यवसाय</label>
-                                <input
+                                <select
                                     value={familyHead.occupation}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                        const selected = occupations.find(
+                                            (item) => item.name === e.target.value
+                                        );
+
+                                        setSelectedOccupationId(selected?.id || "");
+
                                         setFamilyHead({
                                             ...familyHead,
-                                            occupation: e.target.value
-                                        })
-                                    }
-                                    placeholder="व्यवसाय दर्ज करें"
-                                    className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
+                                            occupation: selected?.name || "",
+                                        });
+                                    }}
+                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                >
+                                    <option value="">Select Occupation</option>
+
+                                    {occupations.map((occupation) => (
+                                        <option key={occupation.id} value={occupation.name}>
+                                            {occupation.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div>
@@ -997,32 +1175,66 @@ const FamilySurveyHindi = () => {
                                     >
                                         <option value="">वैवाहिक स्थिति चुनें</option>
                                         <option value="MARRIED">विवाहित</option>
-                                        <option value="UNMARRIED">अविवाहित</option>
-                                        <option value="WIDOW">विधवा / विधुर</option>
-                                        <option value="DIVORSEE">तलाकशुदा</option>
+                                        <option value="NEVER_MARRIED">अविवाहित</option>
+                                        <option value="WIDOWED">विधवा / विधुर</option>
+                                        <option value="DIVORSED">तलाकशुदा</option>
                                     </select>
                                 </div>
 
                                 <div>
                                     <label className={labelClass}>शिक्षा</label>
-                                    <input value={m.education}
+                                    <select
+                                        value={m.education}
                                         onChange={(e) => {
+                                            const selected = educations.find(
+                                                (item) => item.name === e.target.value
+                                            );
+
                                             const updated = [...members];
-                                            updated[index].education = e.target.value;
+
+                                            updated[index].education = selected?.name || "";
+                                            updated[index].educationId = selected?.id || "";
+
                                             setMembers(updated);
-                                        }} placeholder="शिक्षा दर्ज करें"
-                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
+                                        }}
+                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                    >
+                                        <option value="">Select Education</option>
+
+                                        {educations.map((education) => (
+                                            <option key={education.id} value={education.name}>
+                                                {education.name}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 <div>
                                     <label className={labelClass}>व्यवसाय</label>
-                                    <input value={m.occupation}
+                                    <select
+                                        value={m.occupation}
                                         onChange={(e) => {
+                                            const selected = occupations.find(
+                                                (item) => item.name === e.target.value
+                                            );
+
                                             const updated = [...members];
-                                            updated[index].occupation = e.target.value;
+
+                                            updated[index].occupation = selected?.name || "";
+                                            updated[index].occupationId = selected?.id || "";
+
                                             setMembers(updated);
-                                        }} placeholder="व्यवसाय दर्ज करें"
-                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
+                                        }}
+                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                    >
+                                        <option value="">Select Occupation</option>
+
+                                        {occupations.map((occupation) => (
+                                            <option key={occupation.id} value={occupation.name}>
+                                                {occupation.name}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 <div>
@@ -1071,19 +1283,19 @@ const FamilySurveyHindi = () => {
                                 {
                                     label: "परिवार में दिव्यांग व्यक्ति",
                                     key: "hasDisabledPerson",
-                                    detailKey: "disabledPersonDetails",
+                                    detailKey: "disabledPersonName",
                                     placeholder: "दिव्यांग व्यक्ति का नाम लिखें"
                                 },
                                 {
                                     label: "विवाह योग्य पुत्र / पुत्री",
                                     key: "hasMarriageableChild",
-                                    detailKey: "marriageableChildDetails",
+                                    detailKey: "marriageableChildName",
                                     placeholder: "विवाह योग्य सदस्य का नाम लिखें"
                                 },
                                 {
                                     label: "सामुदायिक गतिविधियों में भागीदारी",
                                     key: "participatesCommunity",
-                                    detailKey: "communityDetails",
+                                    detailKey: "communityMemberName",
                                     placeholder: "गतिविधि या सदस्य का नाम लिखें"
                                 },
                             ].map((item) => (
@@ -1125,7 +1337,7 @@ const FamilySurveyHindi = () => {
 
                         <div className="mt-8">
                             <label className={labelClass}>
-                               अपने विचार साझा करें
+                                अपने विचार साझा करें
                             </label>
 
                             <textarea

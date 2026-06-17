@@ -13,6 +13,26 @@ const ApiRoutes = {
       Endpoint: "/family/submit",
       Method: HttpMethod.Post,
     },
+    GetState: {
+       Endpoint: "/user/get-states",
+      Method: HttpMethod.Get,
+    },
+     GetCity: {
+       Endpoint: "/user/get-cities",
+      Method: HttpMethod.Get,
+    },
+     GetCaste: {
+       Endpoint: "/user/get-castes",
+      Method: HttpMethod.Get,
+    },
+     GetEducation: {
+       Endpoint: "/user/get-educations",
+      Method: HttpMethod.Get,
+    },
+     GetOccupations: {
+       Endpoint: "/user/get-occupations",
+      Method: HttpMethod.Get,
+    }
   },
 };
 

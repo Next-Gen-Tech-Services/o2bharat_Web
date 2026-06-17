@@ -13,7 +13,7 @@ class FormApi extends HttpClient {
 
   _initializeRequestInterceptor = () => {
     this.instance.interceptors.request.use((config) => {
-    //   config.headers["Authorization"] = `Bearer ${getTokenLocal()}`;
+      //   config.headers["Authorization"] = `Bearer ${getTokenLocal()}`;
       config.headers["ngrok-skip-browser-warning"] = `true`;
 
       config.headers["authkey"] = import.meta.env.VITE_AUTH_KEY;
@@ -32,14 +32,84 @@ class FormApi extends HttpClient {
     );
   };
 
-  submitFamilyFormConfig = ApiRoutes.FamilyForm.SubmitFamilyForm ;
+  submitFamilyFormConfig = ApiRoutes.FamilyForm.SubmitFamilyForm;
+  getStateConfig = ApiRoutes.FamilyForm.GetState;
+  getCityConfig = ApiRoutes.FamilyForm.GetCity;
+  getCasteConfig = ApiRoutes.FamilyForm.GetCaste;
+  getOccupationConfig = ApiRoutes.FamilyForm.GetOccupations;
+  getEducationConfig = ApiRoutes.FamilyForm.GetEducation;
 
-   submitFamilyForm = async (updateData) => {
+  submitFamilyForm = async (updateData) => {
     return this.instance({
       method: this.submitFamilyFormConfig.Method,
       url: this.submitFamilyFormConfig.Endpoint,
-    //   headers: {},
+      //   headers: {},
       data: updateData,
+    });
+  };
+
+
+  getStates = async ({ page = 1, limit = 10, search = "" } = {}) => {
+    return this.instance({
+      method: this.getStateConfig.Method,
+      url: this.getStateConfig.Endpoint,
+      params: {
+        page,
+        limit,
+        search,
+      },
+    });
+  };
+
+  getCities = async ({
+    stateId,
+    page = 1,
+    limit = 10,
+  } = {}) => {
+    return this.instance({
+      method: this.getCityConfig.Method,
+      url: this.getCityConfig.Endpoint,
+      params: {
+        stateId,
+        page,
+        limit,
+      },
+    });
+  };
+
+  getCastes = async ({ page = 1, limit = 10, search = "" } = {}) => {
+    return this.instance({
+      method: this.getCasteConfig.Method,
+      url: this.getCasteConfig.Endpoint,
+      params: {
+        page,
+        limit,
+        search,
+      },
+    });
+  };
+
+  getEducation = async ({ page = 1, limit = 10, search = "" } = {}) => {
+    return this.instance({
+      method: this.getEducationConfig.Method,
+      url: this.getEducationConfig.Endpoint,
+      params: {
+        page,
+        limit,
+        search,
+      },
+    });
+  };
+
+  getOccupations = async ({ page = 1, limit = 10, search = "" } = {}) => {
+    return this.instance({
+      method: this.getOccupationConfig.Method,
+      url: this.getOccupationConfig.Endpoint,
+      data: {
+        page,
+        limit,
+        search,
+      },
     });
   };
 

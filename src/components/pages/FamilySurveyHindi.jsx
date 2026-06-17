@@ -769,7 +769,7 @@ const FamilySurveyHindi = () => {
                         <div className="text-right">
                             <button
                                 onClick={() => {
-                                    if (validateStep1() || true) {
+                                    if (validateStep1()) {
                                         setFormError("");
                                         setStep(2);
                                     }
@@ -1043,7 +1043,7 @@ const FamilySurveyHindi = () => {
 
                             <button
                                 onClick={() => {
-                                    if (validateStep2() || true) {
+                                    if (validateStep2()) {
                                         setFormError("");
                                         setStep(3);
                                     }

@@ -16,6 +16,7 @@ const FamilySurveyHindi = () => {
     const [castes, setCastes] = useState([]);
     const [educations, setEducations] = useState([]);
     const [occupations, setOccupations] = useState([]);
+    const [showPreview, setShowPreview] = useState(false);
 
     const [selectedStateId, setSelectedStateId] = useState("");
     const [selectedCityId, setSelectedCityId] = useState("");
@@ -1389,12 +1390,12 @@ const FamilySurveyHindi = () => {
 
                             <button
                                 disabled={!isConfirmed}
-                                onClick={async () => {
+                                onClick={() => {
                                     if (!validateMembers()) return;
 
                                     if (!validateSocialInfo()) return;
 
-                                    await handleSubmitSurvey();
+                                    setShowPreview(true);
                                 }}
                                 className={`px-8 py-3 rounded-full text-white transition ${!isConfirmed ? "opacity-50 cursor-not-allowed" : "hover:scale-105 cursor-pointer"}`}
 
@@ -1414,6 +1415,155 @@ const FamilySurveyHindi = () => {
                     </div>
                 )}
             </div>
+            {showPreview && (
+                <div className="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto p-6">
+
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-2xl font-bold text-[#0A2A66]">
+                                सर्वेक्षण विवरण की पुष्टि करें
+                            </h2>
+
+                            <button
+                                onClick={() => setShowPreview(false)}
+                                className="text-red-500 font-bold text-xl"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        {/* Survey Details */}
+                        <div className="mb-8">
+                            <h3 className="font-bold text-lg mb-3 text-[#0A2A66]">
+                                सर्वेक्षण जानकारी
+                            </h3>
+
+                            <div className="grid md:grid-cols-2 gap-3">
+                                <p><strong>राज्य:</strong> {surveyDetails.state}</p>
+                                <p><strong>शहर:</strong> {surveyDetails.city}</p>
+                                <p><strong>वार्ड / क्षेत्र:</strong> {surveyDetails.ward}</p>
+                                <p><strong>पिन कोड:</strong> {surveyDetails.pinCode}</p>
+                                <p><strong>सर्वेक्षक का नाम:</strong> {surveyDetails.surveyorName}</p>
+                            </div>
+                        </div>
+
+                        {/* Family Head */}
+                        <div className="mb-8">
+                            <h3 className="font-bold text-lg mb-3 text-[#0A2A66]">
+                                परिवार प्रमुख की जानकारी
+                            </h3>
+
+                            <div className="grid md:grid-cols-2 gap-3">
+                                <p><strong>नाम:</strong> {familyHead.name}</p>
+                                <p><strong>लिंग:</strong> {familyHead.gender === "MALE" ? "पुरुष" : "महिला"}</p>
+                                <p><strong>पिता / पति का नाम:</strong> {familyHead.fatherName}</p>
+                                <p><strong>जाति:</strong> {familyHead.caste}</p>
+                                <p><strong>शिक्षा:</strong> {familyHead.education}</p>
+                                <p><strong>व्यवसाय:</strong> {familyHead.occupation}</p>
+                                <p><strong>मोबाइल नंबर:</strong> {familyHead.mobile}</p>
+                                <p><strong>ईमेल:</strong> {familyHead.email || "-"}</p>
+                                <p><strong>मूल निवास स्थान:</strong> {familyHead.nativePlace}</p>
+                                <p><strong>आयु:</strong> {familyHead.age}</p>
+                            </div>
+
+                            <p className="mt-3">
+                                <strong>वर्तमान पता:</strong> {familyHead.address}
+                            </p>
+                        </div>
+
+                        {/* Members */}
+                        <div className="mb-8">
+                            <h3 className="font-bold text-lg mb-3 text-[#0A2A66]">
+                                परिवार के सदस्य ({members.length})
+                            </h3>
+
+                            {members.map((member, index) => (
+                                <div
+                                    key={index}
+                                    className="border rounded-xl p-4 mb-3 bg-gray-50"
+                                >
+                                    <h4 className="font-semibold mb-2 text-[#138808]">
+                                        सदस्य #{index + 1}
+                                    </h4>
+
+                                    <p><strong>नाम:</strong> {member.name}</p>
+                                    <p>
+                                        <strong>लिंग:</strong>{" "}
+                                        {member.gender === "MALE" ? "पुरुष" : "महिला"}
+                                    </p>
+                                    <p><strong>आयु:</strong> {member.age}</p>
+                                    <p><strong>रिश्ता:</strong> {member.relation}</p>
+                                    <p><strong>शिक्षा:</strong> {member.education}</p>
+                                    <p><strong>व्यवसाय:</strong> {member.occupation}</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Social Info */}
+                        <div className="mb-8">
+                            <h3 className="font-bold text-lg mb-3 text-[#0A2A66]">
+                                सामाजिक जानकारी
+                            </h3>
+
+                            <p>
+                                <strong>परिवार में दिव्यांग सदस्य:</strong>{" "}
+                                {socialInfo.hasDisabledPerson
+                                    ? socialInfo.disabledPersonName
+                                    : "नहीं"}
+                            </p>
+
+                            <p>
+                                <strong>विवाह योग्य पुत्र / पुत्री:</strong>{" "}
+                                {socialInfo.hasMarriageableChild
+                                    ? socialInfo.marriageableChildName
+                                    : "नहीं"}
+                            </p>
+
+                            <p>
+                                <strong>सामुदायिक गतिविधियों में सहभागिता:</strong>{" "}
+                                {socialInfo.participatesCommunity
+                                    ? socialInfo.communityMemberName
+                                    : "नहीं"}
+                            </p>
+
+                            <p>
+                                <strong>सुझाव / विचार:</strong>{" "}
+                                {socialInfo.thoughts || "-"}
+                            </p>
+                        </div>
+
+                        <div className="bg-yellow-50 border border-yellow-300 rounded-xl p-4 mb-6">
+                            <p className="text-sm text-yellow-800">
+                                कृपया सभी जानकारी ध्यानपूर्वक जांच लें। पुष्टि करने के बाद
+                                सर्वेक्षण जमा कर दिया जाएगा और उसमें बदलाव नहीं किया जा सकेगा।
+                            </p>
+                        </div>
+
+                        <div className="flex justify-end gap-4">
+                            <button
+                                onClick={() => setShowPreview(false)}
+                                className="px-6 py-3 border rounded-xl"
+                            >
+                                जानकारी संशोधित करें
+                            </button>
+
+                            <button
+                                onClick={async () => {
+                                    setShowPreview(false);
+                                    await handleSubmitSurvey();
+                                }}
+                                className="px-6 py-3 text-white rounded-xl"
+                                style={{
+                                    background:
+                                        "linear-gradient(135deg,#FF9933,#138808)"
+                                }}
+                            >
+                                पुष्टि करें एवं जमा करें
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

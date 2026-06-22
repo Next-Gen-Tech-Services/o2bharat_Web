@@ -16,6 +16,7 @@ const FamilySurvey = () => {
     const [castes, setCastes] = useState([]);
     const [educations, setEducations] = useState([]);
     const [occupations, setOccupations] = useState([]);
+    const [showPreview, setShowPreview] = useState(false);
 
     const [selectedStateId, setSelectedStateId] = useState("");
     const [selectedCityId, setSelectedCityId] = useState("");
@@ -1362,12 +1363,12 @@ const FamilySurvey = () => {
 
                             <button
                                 disabled={!isConfirmed}
-                                onClick={async () => {
+                                onClick={() => {
                                     if (!validateMembers()) return;
 
                                     if (!validateSocialInfo()) return;
 
-                                    await handleSubmitSurvey();
+                                    setShowPreview(true);
                                 }}
                                 className={`px-8 py-3 rounded-full text-white transition ${!isConfirmed ? "opacity-50 cursor-not-allowed" : "hover:scale-105 cursor-pointer"}`}
 
@@ -1387,6 +1388,143 @@ const FamilySurvey = () => {
                     </div>
                 )}
             </div>
+            {
+                showPreview && (
+                    <div className="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-4">
+                        <div className="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto p-6">
+
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-2xl font-bold text-[#0A2A66]">
+                                    Review Survey Details
+                                </h2>
+
+                                <button
+                                    onClick={() => setShowPreview(false)}
+                                    className="text-red-500 font-bold"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+
+                            {/* Survey Details */}
+                            <div className="mb-8">
+                                <h3 className="font-bold text-lg mb-3">
+                                    Survey Information
+                                </h3>
+
+                                <div className="grid md:grid-cols-2 gap-3">
+                                    <p><strong>State:</strong> {surveyDetails.state}</p>
+                                    <p><strong>City:</strong> {surveyDetails.city}</p>
+                                    <p><strong>Ward:</strong> {surveyDetails.ward}</p>
+                                    <p><strong>PIN:</strong> {surveyDetails.pinCode}</p>
+                                    <p><strong>Surveyor:</strong> {surveyDetails.surveyorName}</p>
+                                </div>
+                            </div>
+
+                            {/* Family Head */}
+                            <div className="mb-8">
+                                <h3 className="font-bold text-lg mb-3">
+                                    Family Head
+                                </h3>
+
+                                <div className="grid md:grid-cols-2 gap-3">
+                                    <p><strong>Name:</strong> {familyHead.name}</p>
+                                    <p><strong>Gender:</strong> {familyHead.gender}</p>
+                                    <p><strong>Father/Husband:</strong> {familyHead.fatherName}</p>
+                                    <p><strong>Caste:</strong> {familyHead.caste}</p>
+                                    <p><strong>Education:</strong> {familyHead.education}</p>
+                                    <p><strong>Occupation:</strong> {familyHead.occupation}</p>
+                                    <p><strong>Mobile:</strong> {familyHead.mobile}</p>
+                                    <p><strong>Email:</strong> {familyHead.email || "-"}</p>
+                                    <p><strong>Native Place:</strong> {familyHead.nativePlace}</p>
+                                    <p><strong>Age:</strong> {familyHead.age}</p>
+                                </div>
+
+                                <p className="mt-3">
+                                    <strong>Address:</strong> {familyHead.address}
+                                </p>
+                            </div>
+
+                            {/* Members */}
+                            <div className="mb-8">
+                                <h3 className="font-bold text-lg mb-3">
+                                    Family Members ({members.length})
+                                </h3>
+
+                                {members.map((member, index) => (
+                                    <div
+                                        key={index}
+                                        className="border rounded-xl p-4 mb-3"
+                                    >
+                                        <p><strong>Name:</strong> {member.name}</p>
+                                        <p><strong>Gender:</strong> {member.gender}</p>
+                                        <p><strong>Age:</strong> {member.age}</p>
+                                        <p><strong>Relation:</strong> {member.relation}</p>
+                                        <p><strong>Education:</strong> {member.education}</p>
+                                        <p><strong>Occupation:</strong> {member.occupation}</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Social Info */}
+                            <div className="mb-8">
+                                <h3 className="font-bold text-lg mb-3">
+                                    Social Information
+                                </h3>
+
+                                <p>
+                                    <strong>Disabled Person:</strong>{" "}
+                                    {socialInfo.hasDisabledPerson
+                                        ? socialInfo.disabledPersonName
+                                        : "No"}
+                                </p>
+
+                                <p>
+                                    <strong>Marriageable Child:</strong>{" "}
+                                    {socialInfo.hasMarriageableChild
+                                        ? socialInfo.marriageableChildName
+                                        : "No"}
+                                </p>
+
+                                <p>
+                                    <strong>Community Participation:</strong>{" "}
+                                    {socialInfo.participatesCommunity
+                                        ? socialInfo.communityMemberName
+                                        : "No"}
+                                </p>
+
+                                <p>
+                                    <strong>Thoughts:</strong>{" "}
+                                    {socialInfo.thoughts || "-"}
+                                </p>
+                            </div>
+
+                            <div className="flex justify-end gap-4">
+                                <button
+                                    onClick={() => setShowPreview(false)}
+                                    className="px-6 py-3 border rounded-xl"
+                                >
+                                    Edit
+                                </button>
+
+                                <button
+                                    onClick={async () => {
+                                        setShowPreview(false);
+                                        await handleSubmitSurvey();
+                                    }}
+                                    className="px-6 py-3 text-white rounded-xl"
+                                    style={{
+                                        background:
+                                            "linear-gradient(135deg,#FF9933,#138808)"
+                                    }}
+                                >
+                                    Confirm & Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
         </div>
     );
 };

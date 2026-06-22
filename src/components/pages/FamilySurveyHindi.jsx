@@ -882,6 +882,7 @@ const FamilySurveyHindi = () => {
                                         setFamilyHead({
                                             ...familyHead,
                                             education: selected?.name || "",
+                                            educationId: selected?.id || "",
                                         });
                                     }}
                                     className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
@@ -950,6 +951,7 @@ const FamilySurveyHindi = () => {
                                         setFamilyHead({
                                             ...familyHead,
                                             occupation: selected?.name || "",
+                                            occupationId: selected?.id || "",
                                         });
                                     }}
                                     className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"

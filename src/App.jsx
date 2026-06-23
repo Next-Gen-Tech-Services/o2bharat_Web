@@ -8,6 +8,7 @@ import Home from "./components/pages/Home";
 import Footer from "./components/Footer";
 import FamilySurvey from "./components/pages/FamilySurvey";
 import FamilySurveyHindi from "./components/pages/FamilySurveyHindi";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -28,6 +29,11 @@ function App() {
 
       {/* Footer */}
       <Footer />
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+      />
 
     </Router>
   );

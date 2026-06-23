@@ -4,10 +4,30 @@ import React, { useState, useEffect } from "react";
 import { FiMenu, FiX, FiStar } from "react-icons/fi";
 import { FaClipboardList, FaGooglePlay } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavClick = (id) => {
+    if (location.pathname !== "/") {
+      navigate("/");
+
+      setTimeout(() => {
+        document
+          .getElementById(id)
+          ?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else {
+      document
+        .getElementById(id)
+        ?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -16,10 +36,10 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { label: "Home", href: "#hero" },
-    { label: "Modules", href: "#modules" },
-    { label: "Matrimonial", href: "#matrimonial" },
-    { label: "Community", href: "#community" },
+    { label: "Home", id: "hero" },
+    { label: "Modules", id: "modules" },
+    { label: "Matrimonial", id: "matrimonial" },
+    { label: "Community", id: "community" },
   ];
 
   return (
@@ -62,16 +82,13 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
+            <button
               key={link.label}
-              href={link.href}
-              className={`text-[16px] transition duration-300 ${scrolled
-                ? "text-[#0A2A66] hover:text-[#FF9933]"
-                : "text-[#0A2A66] hover:text-[#FF9933]"
-                }`}
+              onClick={() => handleNavClick(link.id)}
+              className="text-[16px] transition duration-300 text-[#0A2A66] hover:text-[#FF9933]"
             >
               {link.label}
-            </a>
+            </button>
           ))}
 
           {/* Family Survey Button */}
@@ -120,14 +137,16 @@ const Navbar = () => {
         >
 
           {navLinks.map((link) => (
-            <a
+            <button
               key={link.label}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
+              onClick={() => {
+                setMenuOpen(false);
+                handleNavClick(link.id);
+              }}
               className="text-[#0A2A66] text-[18px] font-semibold"
             >
               {link.label}
-            </a>
+            </button>
           ))}
 
           <a

@@ -23,6 +23,7 @@ const FamilySurvey = () => {
     const [selectedCasteId, setSelectedCasteId] = useState("");
     const [selectedEducationId, setSelectedEducationId] = useState("");
     const [selectedOccupationId, setSelectedOccupationId] = useState("");
+    const [surveyors, setSurveyors] = useState([]);
 
     const [surveyDetails, setSurveyDetails] = useState({
         surveyorName: "",
@@ -84,6 +85,7 @@ const FamilySurvey = () => {
         fetchCastes();
         fetchEducations();
         fetchOccupations();
+        fetchSurveyors();
     }, []);
 
     const addMember = () => {
@@ -517,6 +519,25 @@ const FamilySurvey = () => {
         }
     };
 
+    const fetchSurveyors = async () => {
+        try {
+            const res = await formApi.getSurveyors({
+                page: 1,
+                limit: 1000,
+            });
+
+            console.log("Surveyors:", res);
+
+            setSurveyors(
+                res?.data?.data ||
+                res?.data ||
+                []
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const labelClass =
         "block mb-2 text-sm font-semibold text-black";
 
@@ -723,9 +744,14 @@ const FamilySurvey = () => {
                                 }
                                 className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
                                 <option value="">Select Surveyor Name</option>
-                                <option value="AJMER">Ajmer</option>
-                                <option value="AMIT VERMA">Amit Verma</option>
-                                <option value="SURESH GUPTA">Suresh Gupta</option>
+                                {surveyors.map((surveyor) => (
+                                    <option
+                                        key={surveyor.id}
+                                        value={surveyor.name}
+                                    >
+                                        {surveyor.name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 

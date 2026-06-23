@@ -38,6 +38,8 @@ class FormApi extends HttpClient {
   getCasteConfig = ApiRoutes.FamilyForm.GetCaste;
   getOccupationConfig = ApiRoutes.FamilyForm.GetOccupations;
   getEducationConfig = ApiRoutes.FamilyForm.GetEducation;
+  getSurveyorsConfig = ApiRoutes.FamilyForm.GetSurveyors;
+  
 
   submitFamilyForm = async (updateData) => {
     return this.instance({
@@ -109,6 +111,17 @@ class FormApi extends HttpClient {
         page,
         limit,
         search,
+      },
+    });
+  };
+
+  getSurveyors = async ({ page = 1, limit = 1000 } = {}) => {
+    return this.instance({
+      method: this.getSurveyorsConfig.Method,
+      url: this.getSurveyorsConfig.Endpoint,
+      data: {
+        page,
+        limit,
       },
     });
   };

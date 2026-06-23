@@ -32,6 +32,10 @@ const ApiRoutes = {
      GetOccupations: {
        Endpoint: "/user/get-occupations",
       Method: HttpMethod.Get,
+    },
+    GetSurveyors: {
+       Endpoint: "/staff/surveyors",
+      Method: HttpMethod.Get,
     }
   },
 };

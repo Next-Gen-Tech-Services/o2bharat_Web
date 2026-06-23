@@ -424,6 +424,10 @@ const FamilySurvey = () => {
 
                 setTimeout(() => {
                     navigate("/");
+                    window.scrollTo({
+                        top: 0,
+                        behavior: "smooth",
+                    });
                 }, 1500);
             } else {
                 toast.error(

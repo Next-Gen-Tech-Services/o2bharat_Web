@@ -26,6 +26,7 @@ const FamilySurveyHindi = () => {
     const [surveyors, setSurveyors] = useState([]);
 
     const [surveyDetails, setSurveyDetails] = useState({
+        surveyorId: "",
         surveyorName: "",
         state: "",
         city: "",
@@ -85,7 +86,6 @@ const FamilySurveyHindi = () => {
         fetchCastes();
         fetchEducations();
         fetchOccupations();
-        fetchSurveyors();
     }, []);
 
     const addMember = () => {
@@ -366,7 +366,7 @@ const FamilySurveyHindi = () => {
 
             const payload = {
                 familyNumber,
-                surveyorName: surveyDetails.surveyorName,
+                surveyorId: surveyDetails.surveyorId,
                 cityId: selectedCityId,
                 stateId: selectedStateId,
                 wardArea: surveyDetails.ward,
@@ -444,9 +444,11 @@ const FamilySurveyHindi = () => {
         }
     };
 
-    const fetchSurveyors = async () => {
+    const fetchSurveyors = async (stateId, cityId) => {
         try {
             const res = await formApi.getSurveyors({
+                stateId,
+                cityId,
                 page: 1,
                 limit: 1000,
             });
@@ -460,9 +462,9 @@ const FamilySurveyHindi = () => {
             );
         } catch (error) {
             console.log(error);
+            setSurveyors([]);
         }
     };
-
 
     const fetchStates = async () => {
         try {
@@ -672,6 +674,8 @@ const FamilySurveyHindi = () => {
                                             ...surveyDetails,
                                             state: selected?.name || "",
                                             city: "",
+                                            surveyorId: "",
+                                            surveyorName: "",
                                         });
 
                                         setCities([]);
@@ -706,7 +710,16 @@ const FamilySurveyHindi = () => {
                                         setSurveyDetails({
                                             ...surveyDetails,
                                             city: selected?.name || "",
+                                            surveyorId: "",
+                                            surveyorName: "",
                                         });
+
+                                        if (selected?.id && selectedStateId) {
+                                            fetchSurveyors(
+                                                selectedStateId,
+                                                selected.id
+                                            );
+                                        }
                                     }}
                                     className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                 >
@@ -761,19 +774,25 @@ const FamilySurveyHindi = () => {
                         <div>
                             <label className={labelClass}>सर्वेक्षक का नाम (वैकल्पिक)</label>
                             <select
-                                value={surveyDetails.surveyorName}
-                                onChange={(e) =>
+                                value={surveyDetails.surveyorId}
+                                onChange={(e) => {
+                                    const selected = surveyors.find(
+                                        (item) => item.id === e.target.value
+                                    );
+
                                     setSurveyDetails({
                                         ...surveyDetails,
-                                        surveyorName: e.target.value
-                                    })
-                                }
+                                        surveyorId: selected?.id || "",
+                                        surveyorName: selected?.name || "",
+                                    });
+                                }}
+
                                 className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
                                 <option value="">सर्वेक्षक चुनें</option>
                                 {surveyors.map((surveyor) => (
                                     <option
                                         key={surveyor.id}
-                                        value={surveyor.name}
+                                        value={surveyor.id}
                                     >
                                         {surveyor.name}
                                     </option>

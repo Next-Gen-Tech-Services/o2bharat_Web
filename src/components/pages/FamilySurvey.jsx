@@ -1153,7 +1153,7 @@ const FamilySurvey = () => {
                                         <option value="MARRIED">Married</option>
                                         <option value="NEVER_MARRIED">Unmarried</option>
                                         <option value="WIDOWED">Widow</option>
-                                        <option value="DIVORSED">Divorsee</option>
+                                        <option value="DIVORCED">Divorsee</option>
                                     </select>
                                 </div>
 

@@ -1180,7 +1180,7 @@ const FamilySurveyHindi = () => {
                                         <option value="MARRIED">विवाहित</option>
                                         <option value="NEVER_MARRIED">अविवाहित</option>
                                         <option value="WIDOWED">विधवा / विधुर</option>
-                                        <option value="DIVORSED">तलाकशुदा</option>
+                                        <option value="DIVORCED">तलाकशुदा</option>
                                     </select>
                                 </div>
 

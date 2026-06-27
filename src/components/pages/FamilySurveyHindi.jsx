@@ -18,6 +18,12 @@ const FamilySurveyHindi = () => {
     const [occupations, setOccupations] = useState([]);
     const [showPreview, setShowPreview] = useState(false);
 
+    const [subCastes, setSubCastes] = useState([]);
+    const [gotras, setGotras] = useState([]);
+
+    const [selectedSubCasteId, setSelectedSubCasteId] = useState("");
+    const [selectedGotraId, setSelectedGotraId] = useState("");
+
     const [selectedStateId, setSelectedStateId] = useState("");
     const [selectedCityId, setSelectedCityId] = useState("");
     const [selectedCasteId, setSelectedCasteId] = useState("");
@@ -40,6 +46,8 @@ const FamilySurveyHindi = () => {
         gender: "",
         fatherName: "",
         caste: "",
+        subCaste: "",
+        gotra: "",
         educationId: "",
         dob: "",
         age: "",
@@ -211,17 +219,24 @@ const FamilySurveyHindi = () => {
         }
 
         if (!selectedCasteId) {
-            newErrors.caste = "Please select caste";
+            newErrors.caste = "कृपया जाति चुनें।";
+        }
+
+        if (!selectedSubCasteId) {
+            newErrors.subCaste = "कृपया उपजाति चुनें।";
+        }
+
+        if (!selectedGotraId) {
+            newErrors.gotra = "कृपया गोत्र चुनें।";
         }
 
         if (!selectedEducationId) {
-            newErrors.education = "Please select education";
+            newErrors.education = "कृपया शिक्षा चुनें।";
         }
 
         if (!selectedOccupationId) {
-            newErrors.occupation = "Please select occupation";
+            newErrors.occupation = "कृपया व्यवसाय चुनें।";
         }
-
 
         setErrors(newErrors);
 
@@ -382,6 +397,8 @@ const FamilySurveyHindi = () => {
 
                 headFatherHusbandName: familyHead.fatherName,
                 headCasteId: selectedCasteId,
+                headSubCasteId: selectedSubCasteId,
+                headGotraId: selectedGotraId,
                 headDob: familyHead.dob,
                 headAge: Number(familyHead.age) || 0,
                 headMobile: familyHead.mobile,
@@ -508,6 +525,36 @@ const FamilySurveyHindi = () => {
             setCastes(res?.data || []);
         } catch (error) {
             console.log(error);
+        }
+    };
+
+    const fetchSubCastes = async (casteId) => {
+        try {
+            const res = await formApi.getSubCastes({
+                casteId,
+                page: 1,
+                limit: 1000,
+            });
+
+            setSubCastes(res?.data || []);
+        } catch (error) {
+            console.log(error);
+            setSubCastes([]);
+        }
+    };
+
+    const fetchGotras = async (subCasteId) => {
+        try {
+            const res = await formApi.getGotras({
+                subCasteId,
+                page: 1,
+                limit: 1000,
+            });
+
+            setGotras(res?.data || []);
+        } catch (error) {
+            console.log(error);
+            setGotras([]);
         }
     };
 
@@ -902,10 +949,22 @@ const FamilySurveyHindi = () => {
 
                                         setSelectedCasteId(selected?.id || "");
 
+                                        setSelectedSubCasteId("");
+                                        setSelectedGotraId("");
+
+                                        setSubCastes([]);
+                                        setGotras([]);
+
                                         setFamilyHead({
                                             ...familyHead,
                                             caste: selected?.name || "",
+                                            subCaste: "",
+                                            gotra: "",
                                         });
+
+                                        if (selected?.id) {
+                                            fetchSubCastes(selected.id);
+                                        }
                                     }}
                                     className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
                                 >
@@ -914,6 +973,82 @@ const FamilySurveyHindi = () => {
                                     {castes.map((caste) => (
                                         <option key={caste.id} value={caste.name}>
                                             {caste.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className={labelClass}>उपजाति</label>
+
+                                <select
+                                    value={familyHead.subCaste}
+                                    disabled={!selectedCasteId}
+                                    onChange={(e) => {
+                                        const selected = subCastes.find(
+                                            item => item.name === e.target.value
+                                        );
+
+                                        setSelectedSubCasteId(selected?.id || "");
+
+                                        setSelectedGotraId("");
+                                        setGotras([]);
+
+                                        setFamilyHead({
+                                            ...familyHead,
+                                            subCaste: selected?.name || "",
+                                            gotra: "",
+                                        });
+
+                                        if (selected?.id) {
+                                            fetchGotras(selected.id);
+                                        }
+                                    }}
+                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                >
+                                    <option value="">
+                                        {selectedCasteId
+                                            ? "उपजाति चुनें"
+                                            : "पहले जाति चुनें"}
+                                    </option>
+
+                                    {subCastes.map(item => (
+                                        <option key={item.id} value={item.name}>
+                                            {item.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className={labelClass}>गोत्र</label>
+
+                                <select
+                                    value={familyHead.gotra}
+                                    disabled={!selectedSubCasteId}
+                                    onChange={(e) => {
+                                        const selected = gotras.find(
+                                            item => item.name === e.target.value
+                                        );
+
+                                        setSelectedGotraId(selected?.id || "");
+
+                                        setFamilyHead({
+                                            ...familyHead,
+                                            gotra: selected?.name || "",
+                                        });
+                                    }}
+                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                >
+                                    <option value="">
+                                        {selectedSubCasteId
+                                            ? "गोत्र चुनें"
+                                            : "पहले उपजाति चुनें"}
+                                    </option>
+
+                                    {gotras.map(item => (
+                                        <option key={item.id} value={item.name}>
+                                            {item.name}
                                         </option>
                                     ))}
                                 </select>
@@ -1508,6 +1643,8 @@ const FamilySurveyHindi = () => {
                                 <p><strong>लिंग:</strong> {familyHead.gender === "MALE" ? "पुरुष" : "महिला"}</p>
                                 <p><strong>पिता / पति का नाम:</strong> {familyHead.fatherName}</p>
                                 <p><strong>जाति:</strong> {familyHead.caste}</p>
+                                <p><strong>उपजाति:</strong> {familyHead.subCaste}</p>
+                                <p><strong>गोत्र:</strong> {familyHead.gotra}</p>
                                 <p><strong>शिक्षा:</strong> {familyHead.education}</p>
                                 <p><strong>व्यवसाय:</strong> {familyHead.occupation}</p>
                                 <p><strong>मोबाइल नंबर:</strong> {familyHead.mobile}</p>

@@ -25,6 +25,14 @@ const ApiRoutes = {
        Endpoint: "/user/get-castes",
       Method: HttpMethod.Get,
     },
+    GetSubCaste: {
+       Endpoint: "/user/get-subcastes",
+      Method: HttpMethod.Get,
+    },
+     GetGotras: {
+       Endpoint: "/user/get-gotras",
+      Method: HttpMethod.Get,
+    },
      GetEducation: {
        Endpoint: "/user/get-educations",
       Method: HttpMethod.Get,

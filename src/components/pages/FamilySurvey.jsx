@@ -18,6 +18,12 @@ const FamilySurvey = () => {
     const [occupations, setOccupations] = useState([]);
     const [showPreview, setShowPreview] = useState(false);
 
+    const [subCastes, setSubCastes] = useState([]);
+    const [gotras, setGotras] = useState([]);
+
+    const [selectedSubCasteId, setSelectedSubCasteId] = useState("");
+    const [selectedGotraId, setSelectedGotraId] = useState("");
+
     const [selectedStateId, setSelectedStateId] = useState("");
     const [selectedCityId, setSelectedCityId] = useState("");
     const [selectedCasteId, setSelectedCasteId] = useState("");
@@ -40,6 +46,8 @@ const FamilySurvey = () => {
         gender: "",
         fatherName: "",
         caste: "",
+        subCaste: "",
+        gotra: "",
         education: "",
         dob: "",
         age: "",
@@ -214,6 +222,14 @@ const FamilySurvey = () => {
             newErrors.caste = "Please select caste";
         }
 
+        if (!selectedSubCasteId) {
+            newErrors.subCaste = "Please select sub caste";
+        }
+
+        if (!selectedGotraId) {
+            newErrors.gotra = "Please select gotra";
+        }
+
         if (!selectedEducationId) {
             newErrors.education = "Please select education";
         }
@@ -381,6 +397,8 @@ const FamilySurvey = () => {
 
                 headFatherHusbandName: familyHead.fatherName,
                 headCasteId: selectedCasteId,
+                headSubCasteId: selectedSubCasteId,
+                headGotraId: selectedGotraId,
                 headDob: familyHead.dob,
                 headAge: Number(familyHead.age) || 0,
                 headMobile: familyHead.mobile,
@@ -488,6 +506,36 @@ const FamilySurvey = () => {
             setCastes(res?.data || []);
         } catch (error) {
             console.log(error);
+        }
+    };
+
+    const fetchSubCastes = async (casteId) => {
+        try {
+            const res = await formApi.getSubCastes({
+                casteId,
+                page: 1,
+                limit: 1000,
+            });
+
+            setSubCastes(res?.data || []);
+        } catch (error) {
+            console.log(error);
+            setSubCastes([]);
+        }
+    };
+
+    const fetchGotras = async (subCasteId) => {
+        try {
+            const res = await formApi.getGotras({
+                subCasteId,
+                page: 1,
+                limit: 1000,
+            });
+
+            setGotras(res?.data || []);
+        } catch (error) {
+            console.log(error);
+            setGotras([]);
         }
     };
 
@@ -880,10 +928,22 @@ const FamilySurvey = () => {
 
                                         setSelectedCasteId(selected?.id || "");
 
+                                        setSelectedSubCasteId("");
+                                        setSelectedGotraId("");
+
+                                        setSubCastes([]);
+                                        setGotras([]);
+
                                         setFamilyHead({
                                             ...familyHead,
                                             caste: selected?.name || "",
+                                            subCaste: "",
+                                            gotra: "",
                                         });
+
+                                        if (selected?.id) {
+                                            fetchSubCastes(selected.id);
+                                        }
                                     }}
                                     className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
                                 >
@@ -892,6 +952,82 @@ const FamilySurvey = () => {
                                     {castes.map((caste) => (
                                         <option key={caste.id} value={caste.name}>
                                             {caste.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className={labelClass}>Sub Caste</label>
+
+                                <select
+                                    value={familyHead.subCaste}
+                                    disabled={!selectedCasteId}
+                                    onChange={(e) => {
+                                        const selected = subCastes.find(
+                                            item => item.name === e.target.value
+                                        );
+
+                                        setSelectedSubCasteId(selected?.id || "");
+
+                                        setSelectedGotraId("");
+                                        setGotras([]);
+
+                                        setFamilyHead({
+                                            ...familyHead,
+                                            subCaste: selected?.name || "",
+                                            gotra: "",
+                                        });
+
+                                        if (selected?.id) {
+                                            fetchGotras(selected.id);
+                                        }
+                                    }}
+                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                >
+                                    <option value="">
+                                        {selectedCasteId
+                                            ? "Select Sub Caste"
+                                            : "Select Caste First"}
+                                    </option>
+
+                                    {subCastes.map(item => (
+                                        <option key={item.id} value={item.name}>
+                                            {item.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className={labelClass}>Gotra</label>
+
+                                <select
+                                    value={familyHead.gotra}
+                                    disabled={!selectedSubCasteId}
+                                    onChange={(e) => {
+                                        const selected = gotras.find(
+                                            item => item.name === e.target.value
+                                        );
+
+                                        setSelectedGotraId(selected?.id || "");
+
+                                        setFamilyHead({
+                                            ...familyHead,
+                                            gotra: selected?.name || "",
+                                        });
+                                    }}
+                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                >
+                                    <option value="">
+                                        {selectedSubCasteId
+                                            ? "Select Gotra"
+                                            : "Select Sub Caste First"}
+                                    </option>
+
+                                    {gotras.map(item => (
+                                        <option key={item.id} value={item.name}>
+                                            {item.name}
                                         </option>
                                     ))}
                                 </select>
@@ -1485,6 +1621,8 @@ const FamilySurvey = () => {
                                     <p><strong>Gender:</strong> {familyHead.gender}</p>
                                     <p><strong>Father/Husband:</strong> {familyHead.fatherName}</p>
                                     <p><strong>Caste:</strong> {familyHead.caste}</p>
+                                    <p><strong>Sub Caste:</strong> {familyHead.subCaste}</p>
+                                    <p><strong>Gotra:</strong> {familyHead.gotra}</p>
                                     <p><strong>Education:</strong> {familyHead.education}</p>
                                     <p><strong>Occupation:</strong> {familyHead.occupation}</p>
                                     <p><strong>Mobile:</strong> {familyHead.mobile}</p>

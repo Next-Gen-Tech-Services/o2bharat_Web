@@ -39,6 +39,8 @@ class FormApi extends HttpClient {
   getOccupationConfig = ApiRoutes.FamilyForm.GetOccupations;
   getEducationConfig = ApiRoutes.FamilyForm.GetEducation;
   getSurveyorsConfig = ApiRoutes.FamilyForm.GetSurveyors;
+  getSubCasteConfig = ApiRoutes.FamilyForm.GetSubCaste;
+  getGotraConfig = ApiRoutes.FamilyForm.GetGotras;
 
 
   submitFamilyForm = async (updateData) => {
@@ -84,6 +86,42 @@ class FormApi extends HttpClient {
       method: this.getCasteConfig.Method,
       url: this.getCasteConfig.Endpoint,
       params: {
+        page,
+        limit,
+        search,
+      },
+    });
+  };
+
+  getSubCastes = async ({
+    casteId,
+    page = 1,
+    limit = 10,
+    search = "",
+  } = {}) => {
+    return this.instance({
+      method: this.getSubCasteConfig.Method,
+      url: this.getSubCasteConfig.Endpoint,
+      params: {
+        casteId,
+        page,
+        limit,
+        search,
+      },
+    });
+  };
+
+  getGotras = async ({
+    subCasteId,
+    page = 1,
+    limit = 10,
+    search = "",
+  } = {}) => {
+    return this.instance({
+      method: this.getGotraConfig.Method,
+      url: this.getGotraConfig.Endpoint,
+      params: {
+        subCasteId,
         page,
         limit,
         search,

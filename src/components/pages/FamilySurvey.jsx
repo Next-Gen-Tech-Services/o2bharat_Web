@@ -148,6 +148,7 @@ const FamilySurvey = () => {
 
         Object.entries(surveyDetails).forEach(([key, value]) => {
             if (
+                key === "surveyorId" ||
                 key === "surveyorName" ||
                 key === "surveyDate"
             ) {

@@ -156,6 +156,8 @@ class FormApi extends HttpClient {
   getSurveyors = async ({
     stateId,
     cityId,
+    casteId,
+    subCasteId,
     page = 1,
     limit = 1000,
   } = {}) => {
@@ -165,6 +167,8 @@ class FormApi extends HttpClient {
       params: {
         stateId,
         cityId,
+        casteId,
+        subCasteId,
         page,
         limit,
       },

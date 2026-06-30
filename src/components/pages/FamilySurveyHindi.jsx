@@ -175,6 +175,15 @@ const FamilySurveyHindi = () => {
             newErrors.city = "Please select city";
         }
 
+        if (!selectedCasteId) {
+            newErrors.caste = "कृपया जाति चुनें।";
+        }
+
+        if (!selectedSubCasteId) {
+            newErrors.subCaste = "कृपया उपजाति चुनें।";
+        }
+
+
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length > 0) {
@@ -217,14 +226,6 @@ const FamilySurveyHindi = () => {
             !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(familyHead.email)
         ) {
             newErrors.email = "मान्य ईमेल पता दर्ज करें";
-        }
-
-        if (!selectedCasteId) {
-            newErrors.caste = "कृपया जाति चुनें।";
-        }
-
-        if (!selectedSubCasteId) {
-            newErrors.subCaste = "कृपया उपजाति चुनें।";
         }
 
         if (!selectedGotraId) {
@@ -462,22 +463,19 @@ const FamilySurveyHindi = () => {
         }
     };
 
-    const fetchSurveyors = async (stateId, cityId) => {
+    const fetchSurveyors = async (stateId, cityId, casteId, subCasteId) => {
         try {
             const res = await formApi.getSurveyors({
                 stateId,
                 cityId,
+                casteId,
+                subCasteId,
                 page: 1,
                 limit: 1000,
             });
 
-            console.log("Surveyors:", res);
+            setSurveyors(res?.data?.data || res?.data || []);
 
-            setSurveyors(
-                res?.data?.data ||
-                res?.data ||
-                []
-            );
         } catch (error) {
             console.log(error);
             setSurveyors([]);
@@ -762,10 +760,17 @@ const FamilySurveyHindi = () => {
                                             surveyorName: "",
                                         });
 
-                                        if (selected?.id && selectedStateId) {
+                                        if (
+                                            selected?.id &&
+                                            selectedStateId &&
+                                            selectedCasteId &&
+                                            selectedSubCasteId
+                                        ) {
                                             fetchSurveyors(
                                                 selectedStateId,
-                                                selected.id
+                                                selected.id,
+                                                selectedCasteId,
+                                                selectedSubCasteId
                                             );
                                         }
                                     }}
@@ -780,6 +785,109 @@ const FamilySurveyHindi = () => {
                                     {cities.map((city) => (
                                         <option key={city.id} value={city.name}>
                                             {city.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className={labelClass}>जाति</label>
+                                <select
+                                    value={familyHead.caste}
+                                    onChange={(e) => {
+                                        const selected = castes.find(
+                                            (item) => item.name === e.target.value
+                                        );
+
+                                        setSelectedCasteId(selected?.id || "");
+
+                                        setSelectedSubCasteId("");
+                                        setSelectedGotraId("");
+
+                                        setSubCastes([]);
+                                        setGotras([]);
+
+                                        setFamilyHead({
+                                            ...familyHead,
+                                            caste: selected?.name || "",
+                                            subCaste: "",
+                                            gotra: "",
+                                        });
+
+                                        if (selected?.id) {
+                                            fetchSubCastes(selected.id);
+
+                                            setSurveyors([]);
+
+                                            setSurveyDetails(prev => ({
+                                                ...prev,
+                                                surveyorId: "",
+                                                surveyorName: "",
+                                            }));
+                                        }
+                                    }}
+                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                >
+                                    <option value="">Select Caste</option>
+
+                                    {castes.map((caste) => (
+                                        <option key={caste.id} value={caste.name}>
+                                            {caste.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className={labelClass}>उपजाति</label>
+
+                                <select
+                                    value={familyHead.subCaste}
+                                    disabled={!selectedCasteId}
+                                    onChange={(e) => {
+                                        const selected = subCastes.find(
+                                            item => item.name === e.target.value
+                                        );
+
+                                        setSelectedSubCasteId(selected?.id || "");
+
+                                        setSelectedGotraId("");
+                                        setGotras([]);
+
+                                        setFamilyHead({
+                                            ...familyHead,
+                                            subCaste: selected?.name || "",
+                                            gotra: "",
+                                        });
+
+                                        if (
+                                            selectedStateId &&
+                                            selectedCityId &&
+                                            selected?.id
+                                        ) {
+                                            fetchSurveyors(
+                                                selectedStateId,
+                                                selectedCityId,
+                                                selectedCasteId,
+                                                selected.id
+                                            );
+                                        }
+
+                                        if (selected?.id) {
+                                            fetchGotras(selected.id);
+                                        }
+                                    }}
+                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                >
+                                    <option value="">
+                                        {selectedCasteId
+                                            ? "उपजाति चुनें"
+                                            : "पहले जाति चुनें"}
+                                    </option>
+
+                                    {subCastes.map(item => (
+                                        <option key={item.id} value={item.name}>
+                                            {item.name}
                                         </option>
                                     ))}
                                 </select>
@@ -817,35 +925,35 @@ const FamilySurveyHindi = () => {
                                     className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
                                 />
                             </div>
-                        </div>
 
-                        <div>
-                            <label className={labelClass}>सर्वेक्षक का नाम (वैकल्पिक)</label>
-                            <select
-                                value={surveyDetails.surveyorId}
-                                onChange={(e) => {
-                                    const selected = surveyors.find(
-                                        (item) => item.id === e.target.value
-                                    );
+                            <div>
+                                <label className={labelClass}>सर्वेक्षक का नाम (वैकल्पिक)</label>
+                                <select
+                                    value={surveyDetails.surveyorId}
+                                    onChange={(e) => {
+                                        const selected = surveyors.find(
+                                            (item) => item.id === e.target.value
+                                        );
 
-                                    setSurveyDetails({
-                                        ...surveyDetails,
-                                        surveyorId: selected?.id || "",
-                                        surveyorName: selected?.name || "",
-                                    });
-                                }}
+                                        setSurveyDetails({
+                                            ...surveyDetails,
+                                            surveyorId: selected?.id || "",
+                                            surveyorName: selected?.name || "",
+                                        });
+                                    }}
 
-                                className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
-                                <option value="">सर्वेक्षक चुनें</option>
-                                {surveyors.map((surveyor) => (
-                                    <option
-                                        key={surveyor.id}
-                                        value={surveyor.id}
-                                    >
-                                        {surveyor.name}
-                                    </option>
-                                ))}
-                            </select>
+                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
+                                    <option value="">सर्वेक्षक चुनें</option>
+                                    {surveyors.map((surveyor) => (
+                                        <option
+                                            key={surveyor.id}
+                                            value={surveyor.id}
+                                        >
+                                            {surveyor.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
 
                         {/* <div>
@@ -937,88 +1045,6 @@ const FamilySurveyHindi = () => {
                                     }
                                     placeholder="पिता / पति का नाम दर्ज करें"
                                     className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
-                            </div>
-
-                            <div>
-                                <label className={labelClass}>जाति</label>
-                                <select
-                                    value={familyHead.caste}
-                                    onChange={(e) => {
-                                        const selected = castes.find(
-                                            (item) => item.name === e.target.value
-                                        );
-
-                                        setSelectedCasteId(selected?.id || "");
-
-                                        setSelectedSubCasteId("");
-                                        setSelectedGotraId("");
-
-                                        setSubCastes([]);
-                                        setGotras([]);
-
-                                        setFamilyHead({
-                                            ...familyHead,
-                                            caste: selected?.name || "",
-                                            subCaste: "",
-                                            gotra: "",
-                                        });
-
-                                        if (selected?.id) {
-                                            fetchSubCastes(selected.id);
-                                        }
-                                    }}
-                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
-                                >
-                                    <option value="">Select Caste</option>
-
-                                    {castes.map((caste) => (
-                                        <option key={caste.id} value={caste.name}>
-                                            {caste.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className={labelClass}>उपजाति</label>
-
-                                <select
-                                    value={familyHead.subCaste}
-                                    disabled={!selectedCasteId}
-                                    onChange={(e) => {
-                                        const selected = subCastes.find(
-                                            item => item.name === e.target.value
-                                        );
-
-                                        setSelectedSubCasteId(selected?.id || "");
-
-                                        setSelectedGotraId("");
-                                        setGotras([]);
-
-                                        setFamilyHead({
-                                            ...familyHead,
-                                            subCaste: selected?.name || "",
-                                            gotra: "",
-                                        });
-
-                                        if (selected?.id) {
-                                            fetchGotras(selected.id);
-                                        }
-                                    }}
-                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
-                                >
-                                    <option value="">
-                                        {selectedCasteId
-                                            ? "उपजाति चुनें"
-                                            : "पहले जाति चुनें"}
-                                    </option>
-
-                                    {subCastes.map(item => (
-                                        <option key={item.id} value={item.name}>
-                                            {item.name}
-                                        </option>
-                                    ))}
-                                </select>
                             </div>
 
                             <div>

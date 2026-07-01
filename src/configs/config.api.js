@@ -7,42 +7,46 @@ export const HttpMethod = {
 };
 
 const ApiRoutes = {
- 
-  FamilyForm: {  
+
+  FamilyForm: {
     SubmitFamilyForm: {
       Endpoint: "/family/submit",
       Method: HttpMethod.Post,
     },
     GetState: {
-       Endpoint: "/user/get-states",
+      Endpoint: "/user/get-states",
       Method: HttpMethod.Get,
     },
-     GetCity: {
-       Endpoint: "/user/get-cities",
+    GetCity: {
+      Endpoint: "/user/get-cities",
       Method: HttpMethod.Get,
     },
-     GetCaste: {
-       Endpoint: "/user/get-castes",
+    GetCaste: {
+      Endpoint: "/user/get-castes",
       Method: HttpMethod.Get,
     },
     GetSubCaste: {
-       Endpoint: "/user/get-subcastes",
+      Endpoint: "/user/get-subcastes",
       Method: HttpMethod.Get,
     },
-     GetGotras: {
-       Endpoint: "/user/get-gotras",
+    GetGotras: {
+      Endpoint: "/user/get-gotras",
       Method: HttpMethod.Get,
     },
-     GetEducation: {
-       Endpoint: "/user/get-educations",
+    CreateGotra: {
+      Endpoint: "/user/create-gotra",
+      Method: HttpMethod.Post,
+    },
+    GetEducation: {
+      Endpoint: "/user/get-educations",
       Method: HttpMethod.Get,
     },
-     GetOccupations: {
-       Endpoint: "/user/get-occupations",
+    GetOccupations: {
+      Endpoint: "/user/get-occupations",
       Method: HttpMethod.Get,
     },
     GetSurveyors: {
-       Endpoint: "/staff/surveyors",
+      Endpoint: "/staff/surveyors",
       Method: HttpMethod.Get,
     }
   },

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaChevronDown } from "react-icons/fa";
 import FormApi from "../../apis/formApi/form.api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+
 
 const FamilySurvey = () => {
     const [step, setStep] = useState(1);
@@ -20,6 +21,9 @@ const FamilySurvey = () => {
 
     const [subCastes, setSubCastes] = useState([]);
     const [gotras, setGotras] = useState([]);
+
+    const [isOtherGotra, setIsOtherGotra] = useState(false);
+    const [otherGotra, setOtherGotra] = useState("");
 
     const [selectedSubCasteId, setSelectedSubCasteId] = useState("");
     const [selectedGotraId, setSelectedGotraId] = useState("");
@@ -199,7 +203,12 @@ const FamilySurvey = () => {
 
         Object.entries(familyHead).forEach(([key, value]) => {
             // optional fields
-            if (key === "email" || key === "dob" || key === "age") {
+            if (
+                key === "email" ||
+                key === "dob" ||
+                key === "age" ||
+                key === "gotra"
+            ) {
                 return;
             }
 
@@ -227,7 +236,11 @@ const FamilySurvey = () => {
             newErrors.email = "Enter a valid email address";
         }
 
-        if (!selectedGotraId) {
+        if (isOtherGotra) {
+            if (!otherGotra.trim()) {
+                newErrors.gotra = "Please enter gotra";
+            }
+        } else if (!selectedGotraId) {
             newErrors.gotra = "Please select gotra";
         }
 
@@ -380,6 +393,17 @@ const FamilySurvey = () => {
 
             const familyNumber = `fp-${stateCode}-${cityCode}-${headNameCode}-${casteCode}`;
 
+            let gotraId = selectedGotraId;
+
+            if (isOtherGotra) {
+                const response = await formApi.createGotra({
+                    name: otherGotra.trim(),
+                    subCasteId: selectedSubCasteId,
+                });
+
+                gotraId = response?.data?.id || response?.data?.data?.id;
+            }
+
             const payload = {
                 familyNumber,
                 surveyorId: surveyDetails.surveyorId,
@@ -399,7 +423,7 @@ const FamilySurvey = () => {
                 headFatherHusbandName: familyHead.fatherName,
                 headCasteId: selectedCasteId,
                 headSubCasteId: selectedSubCasteId,
-                headGotraId: selectedGotraId,
+                headGotraId: gotraId,
                 headDob: familyHead.dob,
                 headAge: Number(familyHead.age) || 0,
                 headMobile: familyHead.mobile,
@@ -686,192 +710,218 @@ const FamilySurvey = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                             <div>
                                 <label className={labelClass}>State</label>
-                                <select
-                                    value={surveyDetails.state}
-                                    onChange={(e) => {
-                                        const selected = states.find(
-                                            (item) => item.name === e.target.value
-                                        );
+                                <div className="relative">
+                                    <select
+                                        value={surveyDetails.state}
+                                        onChange={(e) => {
+                                            const selected = states.find(
+                                                (item) => item.name === e.target.value
+                                            );
 
-                                        setSelectedStateId(selected?.id || "");
+                                            setSelectedStateId(selected?.id || "");
 
-                                        setSurveyDetails({
-                                            ...surveyDetails,
-                                            state: selected?.name || "",
-                                            city: "",
-                                            surveyorId: "",
-                                            surveyorName: "",
-                                        });
+                                            setSurveyDetails({
+                                                ...surveyDetails,
+                                                state: selected?.name || "",
+                                                city: "",
+                                                surveyorId: "",
+                                                surveyorName: "",
+                                            });
 
-                                        setSelectedCityId("");
-                                        setSurveyors([]);
+                                            setSelectedCityId("");
+                                            setSurveyors([]);
 
-                                        setCities([]);
+                                            setCities([]);
 
-                                        if (selected?.id) {
-                                            fetchCities(selected.id);
-                                        }
-                                    }}
-                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
-                                >
-                                    <option value="">Select State</option>
+                                            if (selected?.id) {
+                                                fetchCities(selected.id);
+                                            }
+                                        }}
+                                        className="w-full border appearance-none border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
+                                    >
+                                        <option value="">Select State</option>
 
-                                    {states.map((state) => (
-                                        <option key={state.id} value={state.name}>
-                                            {state.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                        {states.map((state) => (
+                                            <option key={state.id} value={state.name}>
+                                                {state.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <FaChevronDown
+                                        size={14}
+                                        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                    />
+                                </div>
                             </div>
                             <div>
                                 <label className={labelClass}>City</label>
-                                <select
-                                    value={surveyDetails.city}
-                                    disabled={!surveyDetails.state}
-                                    onChange={(e) => {
-                                        const selected = cities.find(
-                                            (item) => item.name === e.target.value
-                                        );
-
-                                        setSelectedCityId(selected?.id || "");
-
-                                        setSurveyDetails({
-                                            ...surveyDetails,
-                                            city: selected?.name || "",
-                                            surveyorId: "",
-                                            surveyorName: "",
-                                        });
-
-                                        if (
-                                            selected?.id &&
-                                            selectedStateId &&
-                                            selectedCasteId &&
-                                            selectedSubCasteId
-                                        ) {
-                                            fetchSurveyors(
-                                                selectedStateId,
-                                                selected.id,
-                                                selectedCasteId,
-                                                selectedSubCasteId
+                                <div className="relative">
+                                    <select
+                                        value={surveyDetails.city}
+                                        disabled={!surveyDetails.state}
+                                        onChange={(e) => {
+                                            const selected = cities.find(
+                                                (item) => item.name === e.target.value
                                             );
-                                        }
-                                    }}
-                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
-                                >
-                                    <option value="">
-                                        {surveyDetails.state
-                                            ? "Select City"
-                                            : "Select State First"}
-                                    </option>
 
-                                    {cities.map((city) => (
-                                        <option key={city.id} value={city.name}>
-                                            {city.name}
+                                            setSelectedCityId(selected?.id || "");
+
+                                            setSurveyDetails({
+                                                ...surveyDetails,
+                                                city: selected?.name || "",
+                                                surveyorId: "",
+                                                surveyorName: "",
+                                            });
+
+                                            if (
+                                                selected?.id &&
+                                                selectedStateId &&
+                                                selectedCasteId &&
+                                                selectedSubCasteId
+                                            ) {
+                                                fetchSurveyors(
+                                                    selectedStateId,
+                                                    selected.id,
+                                                    selectedCasteId,
+                                                    selectedSubCasteId
+                                                );
+                                            }
+                                        }}
+                                        className="w-full border appearance-none border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
+                                    >
+                                        <option value="">
+                                            {surveyDetails.state
+                                                ? "Select City"
+                                                : "Select State First"}
                                         </option>
-                                    ))}
-                                </select>
+
+                                        {cities.map((city) => (
+                                            <option key={city.id} value={city.name}>
+                                                {city.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <FaChevronDown
+                                        size={14}
+                                        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                    />
+                                </div>
                             </div>
 
                             <div>
                                 <label className={labelClass}>Caste</label>
-                                <select
-                                    value={familyHead.caste}
-                                    onChange={(e) => {
-                                        const selected = castes.find(
-                                            (item) => item.name === e.target.value
-                                        );
+                                <div className="relative">
+                                    <select
+                                        value={familyHead.caste}
+                                        onChange={(e) => {
+                                            const selected = castes.find(
+                                                (item) => item.name === e.target.value
+                                            );
 
-                                        setSelectedCasteId(selected?.id || "");
+                                            setSelectedCasteId(selected?.id || "");
 
-                                        setSelectedSubCasteId("");
-                                        setSelectedGotraId("");
+                                            setSelectedSubCasteId("");
+                                            setSelectedGotraId("");
 
-                                        setSubCastes([]);
-                                        setGotras([]);
+                                            setSubCastes([]);
+                                            setGotras([]);
 
-                                        setFamilyHead({
-                                            ...familyHead,
-                                            caste: selected?.name || "",
-                                            subCaste: "",
-                                            gotra: "",
-                                        });
+                                            setFamilyHead({
+                                                ...familyHead,
+                                                caste: selected?.name || "",
+                                                subCaste: "",
+                                                gotra: "",
+                                            });
 
-                                        if (selected?.id) {
-                                            fetchSubCastes(selected.id);
-                                            setSurveyors([]);
+                                            if (selected?.id) {
+                                                fetchSubCastes(selected.id);
+                                                setSurveyors([]);
 
-                                            setSurveyDetails(prev => ({
-                                                ...prev,
-                                                surveyorId: "",
-                                                surveyorName: "",
-                                            }));
-                                        }
-                                    }}
-                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
-                                >
-                                    <option value="">Select Caste</option>
+                                                setSurveyDetails(prev => ({
+                                                    ...prev,
+                                                    surveyorId: "",
+                                                    surveyorName: "",
+                                                }));
+                                            }
+                                        }}
+                                        className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4 pr-12 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
+                                    >
+                                        <option value="">Select Caste</option>
 
-                                    {castes.map((caste) => (
-                                        <option key={caste.id} value={caste.name}>
-                                            {caste.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                        {castes.map((caste) => (
+                                            <option key={caste.id} value={caste.name}>
+                                                {caste.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <FaChevronDown
+                                        size={14}
+                                        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                    />
+                                </div>
                             </div>
 
                             <div>
                                 <label className={labelClass}>Sub Caste</label>
+                                <div className="relative">
 
-                                <select
-                                    value={familyHead.subCaste}
-                                    disabled={!selectedCasteId}
-                                    onChange={(e) => {
-                                        const selected = subCastes.find(
-                                            item => item.name === e.target.value
-                                        );
-
-                                        setSelectedSubCasteId(selected?.id || "");
-
-                                        setSelectedGotraId("");
-                                        setGotras([]);
-
-                                        setFamilyHead({
-                                            ...familyHead,
-                                            subCaste: selected?.name || "",
-                                            gotra: "",
-                                        });
-
-                                        if (
-                                            selectedStateId &&
-                                            selectedCityId &&
-                                            selected?.id
-                                        ) {
-                                            fetchSurveyors(
-                                                selectedStateId,
-                                                selectedCityId,
-                                                selectedCasteId,
-                                                selected.id
+                                    <select
+                                        value={familyHead.subCaste}
+                                        disabled={!selectedCasteId}
+                                        onChange={(e) => {
+                                            const selected = subCastes.find(
+                                                item => item.name === e.target.value
                                             );
-                                        }
 
-                                        if (selected?.id) {
-                                            fetchGotras(selected.id);
-                                        }
-                                    }}
-                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
-                                >
-                                    <option value="">
-                                        {selectedCasteId
-                                            ? "Select Sub Caste"
-                                            : "Select Caste First"}
-                                    </option>
+                                            setSelectedSubCasteId(selected?.id || "");
 
-                                    {subCastes.map(item => (
-                                        <option key={item.id} value={item.name}>
-                                            {item.name}
+                                            setSelectedGotraId("");
+                                            setIsOtherGotra(false);
+                                            setOtherGotra("");
+                                            setGotras([]);
+
+                                            setFamilyHead({
+                                                ...familyHead,
+                                                subCaste: selected?.name || "",
+                                                gotra: "",
+                                            });
+
+                                            if (
+                                                selectedStateId &&
+                                                selectedCityId &&
+                                                selected?.id
+                                            ) {
+                                                fetchSurveyors(
+                                                    selectedStateId,
+                                                    selectedCityId,
+                                                    selectedCasteId,
+                                                    selected.id
+                                                );
+                                            }
+
+                                            if (selected?.id) {
+                                                fetchGotras(selected.id);
+                                            }
+                                        }}
+                                        className="w-full border appearance-none border-[#bec1c6] rounded-2xl px-4 py-4"
+                                    >
+                                        <option value="">
+                                            {selectedCasteId
+                                                ? "Select Sub Caste"
+                                                : "Select Caste First"}
                                         </option>
-                                    ))}
-                                </select>
+
+                                        {subCastes.map(item => (
+                                            <option key={item.id} value={item.name}>
+                                                {item.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <FaChevronDown
+                                        size={14}
+                                        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                    />
+                                </div>
                             </div>
 
                             <div>
@@ -909,31 +959,37 @@ const FamilySurvey = () => {
 
                             <div>
                                 <label className={labelClass}>Surveyor Name</label>
-                                <select
-                                    disabled={!selectedStateId || !selectedCityId}
-                                    value={surveyDetails.surveyorId}
-                                    onChange={(e) => {
-                                        const selected = surveyors.find(
-                                            (item) => item.id === e.target.value
-                                        );
+                                <div className="relative">
+                                    <select
+                                        disabled={!selectedStateId || !selectedCityId}
+                                        value={surveyDetails.surveyorId}
+                                        onChange={(e) => {
+                                            const selected = surveyors.find(
+                                                (item) => item.id === e.target.value
+                                            );
 
-                                        setSurveyDetails({
-                                            ...surveyDetails,
-                                            surveyorId: selected?.id || "",
-                                            surveyorName: selected?.name || "",
-                                        });
-                                    }}
-                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
-                                    <option value="">Select Surveyor Name</option>
-                                    {surveyors.map((surveyor) => (
-                                        <option
-                                            key={surveyor.id}
-                                            value={surveyor.id}
-                                        >
-                                            {surveyor.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                            setSurveyDetails({
+                                                ...surveyDetails,
+                                                surveyorId: selected?.id || "",
+                                                surveyorName: selected?.name || "",
+                                            });
+                                        }}
+                                        className="w-full border appearance-none border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
+                                        <option value="">Select Surveyor Name</option>
+                                        {surveyors.map((surveyor) => (
+                                            <option
+                                                key={surveyor.id}
+                                                value={surveyor.id}
+                                            >
+                                                {surveyor.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <FaChevronDown
+                                        size={14}
+                                        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -999,21 +1055,27 @@ const FamilySurvey = () => {
 
                             <div>
                                 <label className={labelClass}>Gender</label>
-                                <select
-                                    value={familyHead.gender}
-                                    onChange={(e) =>
-                                        setFamilyHead({
-                                            ...familyHead,
-                                            gender: e.target.value
-                                        })
-                                    }
-                                    className=" w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
+                                <div className="relative">
+                                    <select
+                                        value={familyHead.gender}
+                                        onChange={(e) =>
+                                            setFamilyHead({
+                                                ...familyHead,
+                                                gender: e.target.value
+                                            })
+                                        }
+                                        className=" w-full border appearance-none border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
 
-                                    <option value="">Select Gender</option>
-                                    <option value="MALE">Male</option>
-                                    <option value="FEMALE">Female</option>
-                                    {/* <option value="OTHER">Other</option> */}
-                                </select>
+                                        <option value="">Select Gender</option>
+                                        <option value="MALE">Male</option>
+                                        <option value="FEMALE">Female</option>
+                                        {/* <option value="OTHER">Other</option> */}
+                                    </select>
+                                    <FaChevronDown
+                                        size={14}
+                                        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                    />
+                                </div>
                             </div>
 
                             <div>
@@ -1032,64 +1094,108 @@ const FamilySurvey = () => {
 
                             <div>
                                 <label className={labelClass}>Gotra</label>
+                                <div className="relative">
 
-                                <select
-                                    value={familyHead.gotra}
-                                    disabled={!selectedSubCasteId}
-                                    onChange={(e) => {
-                                        const selected = gotras.find(
-                                            item => item.name === e.target.value
-                                        );
+                                    <select
+                                        value={familyHead.gotra}
+                                        disabled={!selectedSubCasteId}
+                                        onChange={(e) => {
+                                            if (e.target.value === "__OTHER__") {
+                                                setIsOtherGotra(true);
+                                                setSelectedGotraId("");
+                                                setFamilyHead({
+                                                    ...familyHead,
+                                                    gotra: "",
+                                                });
+                                                return;
+                                            }
 
-                                        setSelectedGotraId(selected?.id || "");
+                                            setIsOtherGotra(false);
+                                            setOtherGotra("");
 
-                                        setFamilyHead({
-                                            ...familyHead,
-                                            gotra: selected?.name || "",
-                                        });
-                                    }}
-                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
-                                >
-                                    <option value="">
-                                        {selectedSubCasteId
-                                            ? "Select Gotra"
-                                            : "Select Sub Caste First"}
-                                    </option>
+                                            const selected = gotras.find(
+                                                (item) => item.name === e.target.value
+                                            );
 
-                                    {gotras.map(item => (
-                                        <option key={item.id} value={item.name}>
-                                            {item.name}
+                                            setSelectedGotraId(selected?.id || "");
+
+                                            setFamilyHead({
+                                                ...familyHead,
+                                                gotra: selected?.name || "",
+                                            });
+                                        }}
+                                        className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                    >
+                                        <option value="">
+                                            {selectedSubCasteId
+                                                ? "Select Gotra"
+                                                : "Select Sub Caste First"}
                                         </option>
-                                    ))}
-                                </select>
+
+                                        {gotras.map(item => (
+                                            <option key={item.id} value={item.name}>
+                                                {item.name}
+                                            </option>
+                                        ))}
+                                        <option value="__OTHER__">
+                                            Other
+                                        </option>
+                                    </select>
+                                    <FaChevronDown
+                                        size={14}
+                                        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                    />
+                                </div>
+                                {isOtherGotra && (
+                                    <input
+                                        type="text"
+                                        value={otherGotra}
+                                        onChange={(e) => {
+                                            setOtherGotra(e.target.value);
+
+                                            setFamilyHead((prev) => ({
+                                                ...prev,
+                                                gotra: e.target.value,
+                                            }));
+                                        }}
+                                        placeholder="Enter Gotra"
+                                        className="mt-3 w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
+                                    />
+                                )}
                             </div>
 
                             <div>
                                 <label className={labelClass}>Education</label>
-                                <select
-                                    value={familyHead.education}
-                                    onChange={(e) => {
-                                        const selected = educations.find(
-                                            (item) => item.name === e.target.value
-                                        );
+                                <div className="relative">
+                                    <select
+                                        value={familyHead.education}
+                                        onChange={(e) => {
+                                            const selected = educations.find(
+                                                (item) => item.name === e.target.value
+                                            );
 
-                                        setSelectedEducationId(selected?.id || "");
+                                            setSelectedEducationId(selected?.id || "");
 
-                                        setFamilyHead({
-                                            ...familyHead,
-                                            education: selected?.name || "",
-                                        });
-                                    }}
-                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
-                                >
-                                    <option value="">Select Education</option>
+                                            setFamilyHead({
+                                                ...familyHead,
+                                                education: selected?.name || "",
+                                            });
+                                        }}
+                                        className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                    >
+                                        <option value="">Select Education</option>
 
-                                    {educations.map((education) => (
-                                        <option key={education.id} value={education.name}>
-                                            {education.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                        {educations.map((education) => (
+                                            <option key={education.id} value={education.name}>
+                                                {education.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <FaChevronDown
+                                        size={14}
+                                        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                    />
+                                </div>
                             </div>
                             <div>
                                 <label className={labelClass}>Date of Birth</label>
@@ -1134,30 +1240,36 @@ const FamilySurvey = () => {
 
                             <div>
                                 <label className={labelClass}>Occupation</label>
-                                <select
-                                    value={familyHead.occupation}
-                                    onChange={(e) => {
-                                        const selected = occupations.find(
-                                            (item) => item.name === e.target.value
-                                        );
+                                <div className="relative">
+                                    <select
+                                        value={familyHead.occupation}
+                                        onChange={(e) => {
+                                            const selected = occupations.find(
+                                                (item) => item.name === e.target.value
+                                            );
 
-                                        setSelectedOccupationId(selected?.id || "");
+                                            setSelectedOccupationId(selected?.id || "");
 
-                                        setFamilyHead({
-                                            ...familyHead,
-                                            occupation: selected?.name || "",
-                                        });
-                                    }}
-                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
-                                >
-                                    <option value="">Select Occupation</option>
+                                            setFamilyHead({
+                                                ...familyHead,
+                                                occupation: selected?.name || "",
+                                            });
+                                        }}
+                                        className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                    >
+                                        <option value="">Select Occupation</option>
 
-                                    {occupations.map((occupation) => (
-                                        <option key={occupation.id} value={occupation.name}>
-                                            {occupation.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                        {occupations.map((occupation) => (
+                                            <option key={occupation.id} value={occupation.name}>
+                                                {occupation.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <FaChevronDown
+                                        size={14}
+                                        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                    />
+                                </div>
                             </div>
 
                             <div>
@@ -1301,19 +1413,25 @@ const FamilySurvey = () => {
 
                                 <div>
                                     <label className={labelClass}>Gender</label>
-                                    <select
-                                        value={m.gender}
-                                        onChange={(e) => {
-                                            const updated = [...members];
-                                            updated[index].gender = e.target.value;
-                                            setMembers(updated);
-                                        }}
-                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
-                                        <option value="">Select Gender</option>
-                                        <option value="MALE">Male</option>
-                                        <option value="FEMALE">Female</option>
-                                        {/* <option value="OTHER">Other</option> */}
-                                    </select>
+                                    <div className="relative">
+                                        <select
+                                            value={m.gender}
+                                            onChange={(e) => {
+                                                const updated = [...members];
+                                                updated[index].gender = e.target.value;
+                                                setMembers(updated);
+                                            }}
+                                            className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10">
+                                            <option value="">Select Gender</option>
+                                            <option value="MALE">Male</option>
+                                            <option value="FEMALE">Female</option>
+                                            {/* <option value="OTHER">Other</option> */}
+                                        </select>
+                                        <FaChevronDown
+                                            size={14}
+                                            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div>
@@ -1360,77 +1478,95 @@ const FamilySurvey = () => {
 
                                 <div>
                                     <label className={labelClass}>Marital Status</label>
-                                    <select
-                                        value={m.maritalStatus}
-                                        onChange={(e) => {
-                                            const updated = [...members];
-                                            updated[index].maritalStatus = e.target.value;
-                                            setMembers(updated);
-                                        }}
-                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
-                                    >
-                                        <option value="">Select Marital Status</option>
-                                        <option value="MARRIED">Married</option>
-                                        <option value="NEVER_MARRIED">Unmarried</option>
-                                        <option value="WIDOWED">Widow</option>
-                                        <option value="DIVORCED">Divorsee</option>
-                                    </select>
+                                    <div className="relative">
+                                        <select
+                                            value={m.maritalStatus}
+                                            onChange={(e) => {
+                                                const updated = [...members];
+                                                updated[index].maritalStatus = e.target.value;
+                                                setMembers(updated);
+                                            }}
+                                            className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
+                                        >
+                                            <option value="">Select Marital Status</option>
+                                            <option value="MARRIED">Married</option>
+                                            <option value="NEVER_MARRIED">Unmarried</option>
+                                            <option value="WIDOWED">Widow</option>
+                                            <option value="DIVORCED">Divorsee</option>
+                                        </select>
+                                        <FaChevronDown
+                                            size={14}
+                                            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div>
                                     <label className={labelClass}>Education</label>
-                                    <select
-                                        value={m.education}
-                                        onChange={(e) => {
-                                            const selected = educations.find(
-                                                (item) => item.name === e.target.value
-                                            );
+                                    <div className="relative">
+                                        <select
+                                            value={m.education}
+                                            onChange={(e) => {
+                                                const selected = educations.find(
+                                                    (item) => item.name === e.target.value
+                                                );
 
-                                            const updated = [...members];
+                                                const updated = [...members];
 
-                                            updated[index].education = selected?.name || "";
-                                            updated[index].educationId = selected?.id || "";
+                                                updated[index].education = selected?.name || "";
+                                                updated[index].educationId = selected?.id || "";
 
-                                            setMembers(updated);
-                                        }}
-                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
-                                    >
-                                        <option value="">Select Education</option>
+                                                setMembers(updated);
+                                            }}
+                                            className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                        >
+                                            <option value="">Select Education</option>
 
-                                        {educations.map((education) => (
-                                            <option key={education.id} value={education.name}>
-                                                {education.name}
-                                            </option>
-                                        ))}
-                                    </select>
+                                            {educations.map((education) => (
+                                                <option key={education.id} value={education.name}>
+                                                    {education.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <FaChevronDown
+                                            size={14}
+                                            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div>
                                     <label className={labelClass}>Occupation</label>
-                                    <select
-                                        value={m.occupation}
-                                        onChange={(e) => {
-                                            const selected = occupations.find(
-                                                (item) => item.name === e.target.value
-                                            );
+                                    <div className="relative">
+                                        <select
+                                            value={m.occupation}
+                                            onChange={(e) => {
+                                                const selected = occupations.find(
+                                                    (item) => item.name === e.target.value
+                                                );
 
-                                            const updated = [...members];
+                                                const updated = [...members];
 
-                                            updated[index].occupation = selected?.name || "";
-                                            updated[index].occupationId = selected?.id || "";
+                                                updated[index].occupation = selected?.name || "";
+                                                updated[index].occupationId = selected?.id || "";
 
-                                            setMembers(updated);
-                                        }}
-                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4"
-                                    >
-                                        <option value="">Select Occupation</option>
+                                                setMembers(updated);
+                                            }}
+                                            className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4"
+                                        >
+                                            <option value="">Select Occupation</option>
 
-                                        {occupations.map((occupation) => (
-                                            <option key={occupation.id} value={occupation.name}>
-                                                {occupation.name}
-                                            </option>
-                                        ))}
-                                    </select>
+                                            {occupations.map((occupation) => (
+                                                <option key={occupation.id} value={occupation.name}>
+                                                    {occupation.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <FaChevronDown
+                                            size={14}
+                                            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div>
@@ -1499,20 +1635,25 @@ const FamilySurvey = () => {
                                     <label className={labelClass}>
                                         {item.label}
                                     </label>
-
-                                    <select
-                                        value={socialInfo[item.key]}
-                                        onChange={(e) =>
-                                            setSocialInfo({
-                                                ...socialInfo,
-                                                [item.key]: e.target.value === "true",
-                                            })
-                                        }
-                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
-                                    >
-                                        <option value="true">Yes</option>
-                                        <option value="false">No</option>
-                                    </select>
+                                    <div className="relative">
+                                        <select
+                                            value={socialInfo[item.key]}
+                                            onChange={(e) =>
+                                                setSocialInfo({
+                                                    ...socialInfo,
+                                                    [item.key]: e.target.value === "true",
+                                                })
+                                            }
+                                            className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
+                                        >
+                                            <option value="true">Yes</option>
+                                            <option value="false">No</option>
+                                        </select>
+                                        <FaChevronDown
+                                            size={14}
+                                            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                        />
+                                    </div>
 
                                     {socialInfo[item.key] && (
                                         <input

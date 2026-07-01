@@ -41,6 +41,7 @@ class FormApi extends HttpClient {
   getSurveyorsConfig = ApiRoutes.FamilyForm.GetSurveyors;
   getSubCasteConfig = ApiRoutes.FamilyForm.GetSubCaste;
   getGotraConfig = ApiRoutes.FamilyForm.GetGotras;
+  createGotraConfig = ApiRoutes.FamilyForm.CreateGotra;
 
 
   submitFamilyForm = async (updateData) => {
@@ -125,6 +126,22 @@ class FormApi extends HttpClient {
         page,
         limit,
         search,
+      },
+    });
+  };
+
+  createGotra = async ({
+    name,
+    subCasteId,
+    isActive = true,
+  }) => {
+    return this.instance({
+      method: this.createGotraConfig.Method,
+      url: this.createGotraConfig.Endpoint,
+      data: {
+        name,
+        isActive,
+        subCasteId,
       },
     });
   };

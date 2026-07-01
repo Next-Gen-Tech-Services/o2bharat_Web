@@ -1537,7 +1537,7 @@ const FamilySurveyHindi = () => {
                                             }}
                                             className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4"
                                         >
-                                            <option value="">Select Education</option>
+                                            <option value="">शिक्षा चुनें</option>
 
                                             {educations.map((education) => (
                                                 <option key={education.id} value={education.name}>
@@ -1571,7 +1571,7 @@ const FamilySurveyHindi = () => {
                                             }}
                                             className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4"
                                         >
-                                            <option value="">Select Occupation</option>
+                                            <option value="">व्यवसाय चुनें</option>
 
                                             {occupations.map((occupation) => (
                                                 <option key={occupation.id} value={occupation.name}>

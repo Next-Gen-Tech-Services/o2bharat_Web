@@ -407,7 +407,7 @@ const FamilySurveyHindi = () => {
 
             const payload = {
                 familyNumber,
-                surveyorId: surveyDetails.surveyorId,
+                surveyorId: surveyDetails.surveyorId || null,
                 cityId: selectedCityId,
                 stateId: selectedStateId,
                 wardArea: surveyDetails.ward,

@@ -62,6 +62,7 @@ class FormApi extends HttpClient {
         page,
         limit,
         search,
+        surveyEnabled: true,
       },
     });
   };
@@ -78,6 +79,7 @@ class FormApi extends HttpClient {
         stateId,
         page,
         limit,
+        surveyEnabled: true,
       },
     });
   };
@@ -90,6 +92,7 @@ class FormApi extends HttpClient {
         page,
         limit,
         search,
+        surveyEnabled: true,
       },
     });
   };
@@ -108,6 +111,7 @@ class FormApi extends HttpClient {
         page,
         limit,
         search,
+        surveyEnabled: true,
       },
     });
   };

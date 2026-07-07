@@ -4,6 +4,9 @@ import FormApi from "../../apis/formApi/form.api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
+import agarwalBg from "../../../public/Agarwal_bg.png";
+import defaultBgForm from "../../../public/default-bg-form.png"
+
 const FamilySurveyHindi = () => {
     const [step, setStep] = useState(1);
     const [isConfirmed, setIsConfirmed] = useState(false);
@@ -144,6 +147,16 @@ const FamilySurveyHindi = () => {
         }
 
         return age >= 0 ? age.toString() : "";
+    };
+
+    const getBackgroundImage = () => {
+        switch (familyHead.subCaste?.toLowerCase()) {
+            case "agarwal":
+                return agarwalBg;
+
+            default:
+                return defaultBgForm;
+        }
     };
 
     const validateStep1 = () => {
@@ -640,10 +653,12 @@ const FamilySurveyHindi = () => {
         "block mb-2 text-sm font-semibold text-black";
 
     return (
-        <div className="min-h-screen py-6 md:py-10 px-3 md:px-4" style={{
-            background:
-                "linear-gradient(135deg,#FFF4E8 0%,#F6F9F5 50%,#EAF7ED 100%)"
-        }}>
+        <div
+            className="min-h-screen py-6 md:py-10 px-3 md:px-4 bg-cover bg-center bg-no-repeat"
+            style={{
+                backgroundImage: `url(${getBackgroundImage()})`,
+            }}
+        >
             <div className="text-center mb-10">
                 <div
                     className="inline-flex px-5 py-2 rounded-full text-sm font-semibold mb-5"

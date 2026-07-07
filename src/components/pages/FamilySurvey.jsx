@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaTrash, FaChevronDown } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import FormApi from "../../apis/formApi/form.api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -82,19 +82,23 @@ const FamilySurvey = () => {
     const [errors, setErrors] = useState({});
     const [formError, setFormError] = useState("");
 
-    const [members, setMembers] = useState([
-        {
-            name: "",
-            gender: "",
-            dob: "",
-            age: "",
-            maritalStatus: "",
-            educationId: "",
-            occupationId: "",
-            mobile: "",
-            relation: ""
-        }
-    ]);
+    const emptyMember = () => ({
+        name: "",
+        gender: "",
+        dob: "",
+        age: "",
+        maritalStatus: "",
+        education: "",
+        educationId: "",
+        occupation: "",
+        occupationId: "",
+        mobile: "",
+        relation: ""
+    });
+
+    const [memberCount, setMemberCount] = useState(1);
+
+    const [members, setMembers] = useState([emptyMember()]);
 
     useEffect(() => {
         fetchStates();
@@ -102,31 +106,6 @@ const FamilySurvey = () => {
         fetchEducations();
         fetchOccupations();
     }, []);
-
-    const addMember = () => {
-        setMembers([
-            ...members,
-            {
-                name: "",
-                gender: "",
-                dob: "",
-                age: "",
-                maritalStatus: "",
-                educationId: "",
-                occupationId: "",
-                mobile: "",
-                relation: ""
-            }
-        ]);
-    };
-
-    const removeMember = (indexToRemove) => {
-        if (members.length === 1) return;
-
-        setMembers(
-            members.filter((_, index) => index !== indexToRemove)
-        );
-    };
 
     const calculateAge = (dob) => {
         if (!dob) return "";
@@ -198,6 +177,14 @@ const FamilySurvey = () => {
 
         if (!selectedCityId) {
             newErrors.city = "Please select city";
+        }
+
+        if (
+            !memberCount ||
+            Number(memberCount) < 1
+        ) {
+            newErrors.memberCount =
+                "Number of family members must be at least 1";
         }
 
         setErrors(newErrors);
@@ -1006,6 +993,25 @@ const FamilySurvey = () => {
                                     />
                                 </div>
                             </div>
+
+                            <div>
+                                <label className={labelClass}>
+                                    Number of Family Members
+                                </label>
+
+                                <input
+                                    type="number"
+                                    min={1}
+                                    value={memberCount}
+                                    onChange={(e) => {
+                                        const value = e.target.value.replace(/\D/g, "");
+
+                                        setMemberCount(value === "" ? "" : Number(value));
+                                    }}
+                                    placeholder="Enter number of members"
+                                    className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
+                                />
+                            </div>
                         </div>
 
 
@@ -1368,6 +1374,13 @@ const FamilySurvey = () => {
                                 onClick={() => {
                                     if (validateStep2()) {
                                         setFormError("");
+                                        const generatedMembers = Array.from(
+                                            { length: Number(memberCount) },
+                                            () => emptyMember()
+                                        );
+
+                                        setMembers(generatedMembers);
+
                                         setStep(3);
                                     }
                                 }}
@@ -1402,15 +1415,6 @@ const FamilySurvey = () => {
                                     <h3 className="font-bold text-[#0A2A66] text-base md:text-lg">
                                         Family Member #{index + 1}
                                     </h3>
-
-                                    {members.length > 1 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => removeMember(index)}
-                                            className="w-10 h-10 rounded-full flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 transition">
-                                            <FaTrash size={14} />
-                                        </button>
-                                    )}
 
                                 </div>
                                 <div>
@@ -1613,12 +1617,6 @@ const FamilySurvey = () => {
                                 </div>
                             </div>
                         ))}
-
-                        <button
-                            onClick={addMember}
-                            className=" w-full sm:w-auto mb-8 px-6 py-3 rounded-full font-semibold text-[#0A2A66] bg-[#FFF4E8]  border border-[#FFD6AA] hover:scale-105 transition">
-                            + Add Member
-                        </button>
 
                         <h2 className="text-2xl font-bold mb-4">
                             Social Information

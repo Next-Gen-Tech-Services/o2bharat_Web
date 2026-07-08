@@ -179,12 +179,12 @@ const FamilySurvey = () => {
             newErrors.city = "Please select city";
         }
 
-        if (
-            !memberCount ||
-            Number(memberCount) < 1
-        ) {
+        if (!memberCount || Number(memberCount) < 1) {
             newErrors.memberCount =
                 "Number of family members must be at least 1";
+        } else if (Number(memberCount) > 20) {
+            newErrors.memberCount =
+                "Number of family members cannot exceed 20";
         }
 
         setErrors(newErrors);

@@ -179,12 +179,12 @@ const FamilySurveyHindi = () => {
             newErrors.subCaste = "कृपया उपजाति चुनें।";
         }
 
-        if (
-            !memberCount ||
-            Number(memberCount) < 1
-        ) {
+        if (!memberCount || Number(memberCount) < 1) {
             newErrors.memberCount =
                 "परिवार के सदस्यों की संख्या कम से कम 1 होनी चाहिए।";
+        } else if (Number(memberCount) > 20) {
+            newErrors.memberCount =
+                "परिवार के सदस्यों की संख्या 20 से अधिक नहीं हो सकती।";
         }
 
 

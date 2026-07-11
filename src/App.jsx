@@ -9,6 +9,9 @@ import Footer from "./components/Footer";
 import FamilySurvey from "./components/pages/FamilySurvey";
 import FamilySurveyHindi from "./components/pages/FamilySurveyHindi";
 import { ToastContainer } from "react-toastify";
+import PrivacyPolicy from "./components/pages/PrivacyPolicy";
+import TermsConditions from "./components/pages/TermsConditions";
+import Support from "./components/pages/Support";
 
 function App() {
   return (
@@ -23,6 +26,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="family-survey/en" element={<FamilySurvey />} />
           <Route path="family-survey/hi" element={<FamilySurveyHindi />} />
+
+           <Route path="privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="terms-and-conditions" element={<TermsConditions />} />
+             <Route path="support" element={<Support />} />
 
         </Routes>
       </main>

@@ -16,7 +16,7 @@ const Footer = () => {
       className="border-t py-[60px] px-6 md:px-10 pb-[30px]"
       style={{
         background:
-"linear-gradient(180deg,#fbd7b0 0%, #ccefd6 100%)",
+          "linear-gradient(180deg,#fbd7b0 0%, #ccefd6 100%)",
         borderColor: "rgba(255,153,51,0.15)",
       }}
     >
@@ -24,7 +24,7 @@ const Footer = () => {
       <div className="max-w-[1200px] mx-auto">
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[2fr_1fr] gap-10 md:gap-14 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr] gap-10 md:gap-14 mb-12">
 
           {/* Brand */}
           <div className="text-center sm:text-left">
@@ -48,7 +48,7 @@ const Footer = () => {
                 </div>
               </div> */}
 
-              <img src="logo3.png" alt="" className="w-36"/>
+              <img src="logo3.png" alt="" className="w-36" />
 
 
             </div>
@@ -94,11 +94,43 @@ const Footer = () => {
 
           </div>
 
+          {/* Legal & Support */}
+          <div className="text-center sm:text-left">
+
+            <h4 className="text-[#FF9933] text-[16px] mb-5">
+              Legal & Support
+            </h4>
+
+            <div className="flex flex-col gap-2">
+              <a
+                href="/privacy-policy"
+                className="text-[#0A2A66] text-[13px] hover:text-[#FF9933] transition"
+              >
+                Privacy Policy
+              </a>
+
+              <a
+                href="/terms-and-conditions"
+                className="text-[#0A2A66] text-[13px] hover:text-[#FF9933] transition"
+              >
+                Terms & Conditions
+              </a>
+
+              <a
+                href="/support"
+                className="text-[#0A2A66] text-[13px] hover:text-[#FF9933] transition"
+              >
+                Support
+              </a>
+            </div>
+
+          </div>
+
         </div>
 
         {/* Bottom Bar */}
         <div className="border-t pt-6 flex justify-center items-center gap-3 text-center"
-             style={{ borderColor: "rgba(255,153,51,0.15)" }}>
+          style={{ borderColor: "rgba(255,153,51,0.15)" }}>
 
           <div className="text-[#64748b] text-[12px]">
             © 2026 DIGITAL PLATFORM FOR COMMUNITIES. All rights reserved.

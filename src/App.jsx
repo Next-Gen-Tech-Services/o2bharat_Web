@@ -12,6 +12,7 @@ import { ToastContainer } from "react-toastify";
 import PrivacyPolicy from "./components/pages/PrivacyPolicy";
 import TermsConditions from "./components/pages/TermsConditions";
 import Support from "./components/pages/Support";
+import ChildSafetyStandards from "./components/pages/chileSafety";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
            <Route path="privacy-policy" element={<PrivacyPolicy />} />
             <Route path="terms-and-conditions" element={<TermsConditions />} />
              <Route path="support" element={<Support />} />
+              <Route path="child-safety" element={<ChildSafetyStandards />} />
 
         </Routes>
       </main>

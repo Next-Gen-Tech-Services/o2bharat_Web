@@ -122,6 +122,13 @@ const Footer = () => {
               >
                 Support
               </a>
+
+               <a
+                href="/child-safety"
+                className="text-[#0A2A66] text-[13px] hover:text-[#FF9933] transition"
+              >
+                Child Safety
+              </a>
             </div>
 
           </div>

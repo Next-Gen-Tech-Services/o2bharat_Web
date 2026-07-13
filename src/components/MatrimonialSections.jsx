@@ -3,123 +3,11 @@ import { membershipPlans } from "../components/data/Module";
 import { FaWhatsapp } from "react-icons/fa";
 import RequestModal from "./RequestModal";
 
-const PhoneMockup = ({ screen }) => (
-  <div className="w-[150px] h-[300px] sm:w-[180px] sm:h-[360px] md:w-[220px] md:h-[440px] bg-[#0d0d0d] rounded-[32px] md:rounded-[36px] border-[6px] md:border-[8px] border-[#222] shadow-[0_30px_60px_rgba(0,0,0,0.6),inset_0_0_0_1px_#333,0_0_30px_rgba(19,136,8,0.15)] overflow-hidden relative flex-shrink-0">
-    {/* Notch */}
-    <div className="absolute top-[8px] left-1/2 -translate-x-1/2 w-[70px] h-[18px] bg-[#0d0d0d] rounded-[20px] z-10" />
-
-    <div
-      className="w-full h-full flex flex-col gap-2 pt-[28px] px-3 md:px-4 pb-3 md:pb-4"
-      style={{
-        background: "linear-gradient(160deg,#0A2A66,#138808)",
-      }}
-    >
-      {screen === "home" && <HomeScreen />}
-      {screen === "matrimonial" && <MatrimonialScreen />}
-      {screen === "profile" && <ProfileScreen />}
-    </div>
-  </div>
-);
-
-const HomeScreen = () => (
-  <>
-    <div className="text-center mb-2">
-      <div className="yatra text-[14px] md:text-[16px] text-[#FF9933]">
-        सामाजिक एकता
-      </div>
-
-      <div className="text-[8px] md:text-[9px] text-[#0A2A66] tracking-[2px]">
-        DIGITAL PLATFORM
-      </div>
-    </div>
-
-    <div className="grid grid-cols-2 gap-[5px] md:gap-[6px]">
-      {[
-        { icon: "💍", label: "Matrimonial", color: "#FF9933" },
-        { icon: "💼", label: "Jobs", color: "#138808" },
-        { icon: "🏪", label: "Business", color: "#0A2A66" },
-        { icon: "🤲", label: "Donate", color: "#FF9933" },
-        { icon: "📅", label: "Events", color: "#138808" },
-        { icon: "♿", label: "Divyangjan", color: "#0A2A66" },
-      ].map((item, i) => (
-        <div
-          key={i}
-          className="rounded-[10px] md:rounded-[12px] text-center px-2 py-[8px] md:py-[10px]"
-          style={{
-            background: `${item.color}15`,
-            border: `1px solid ${item.color}30`,
-          }}
-        >
-          <div className="text-[18px] md:text-[20px]">{item.icon}</div>
-
-          <div className="text-[8px] md:text-[9px] text-[#ffffff] mt-[3px]">
-            {item.label}
-          </div>
-        </div>
-      ))}
-    </div>
-  </>
-);
-
-const MatrimonialScreen = () => (
-  <>
-    <div className="text-[11px] text-[#FF9933] font-bold">💍 Matrimonial</div>
-
-    {[
-      { name: "Priya Sharma", age: 26, city: "Delhi" },
-      { name: "Ritu Gupta", age: 24, city: "Mumbai" },
-      { name: "Neha Singh", age: 28, city: "Jaipur" },
-    ].map((p, i) => (
-      <div
-        key={i}
-        className="flex items-center gap-2 rounded-[10px] px-[10px] py-2"
-        style={{
-          background: "rgba(255,255,255,0.7)",
-          border: "1px solid rgba(255,153,51,0.25)",
-        }}
-      >
-        <div
-          className="w-[32px] h-[32px] rounded-full flex items-center justify-center text-[14px]"
-          style={{
-            background: `hsl(${i * 60 + 30},60%,70%)`,
-          }}
-        >
-          👩
-        </div>
-
-        <div>
-          <div className="text-[10px] text-[#ffffff] font-semibold">
-            {p.name}
-          </div>
-
-          <div className="text-[9px] text-[#ffffff]">
-            {p.age} yrs • {p.city}
-          </div>
-        </div>
-
-        <div
-          className="ml-auto text-[8px] px-[7px] py-[3px] rounded-[10px]"
-          style={{
-            background: "rgba(255,153,51,0.15)",
-            color: "#FF9933",
-          }}
-        >
-          View
-        </div>
-      </div>
-    ))}
-
-    <div
-      className="rounded-[8px] text-center text-[10px] font-bold py-2"
-      style={{
-        background: "linear-gradient(135deg,#FF9933,#138808)",
-        color: "#ffffff",
-      }}
-    >
-      Upgrade to see more →
-    </div>
-  </>
-);
+import Phone1 from "../../public/o2bApp1.png";
+import Phone2 from "../../public/o2bApp2.png";
+import Phone3 from "../../public/o2bApp3.png";
+import Phone4 from "../../public/o2bApp4.png";
+import Phone5 from "../../public/o2bApp5.png";
 
 const ProfileScreen = () => (
   <>
@@ -159,7 +47,7 @@ const ProfileScreen = () => (
 
 const MatrimonialSection = () => {
   const [activeScreen, setActiveScreen] = useState(1);
-  const screens = ["home", "matrimonial", "profile"];
+  const screens = [Phone1, Phone2, Phone3, Phone4, Phone5];
   const [openRequestModal, setOpenRequestModal] = useState(false);
 
   return (
@@ -256,7 +144,7 @@ items-center
             </a> */}
 
             <button
-            onClick={() => setOpenRequestModal(true)}
+              onClick={() => setOpenRequestModal(true)}
               className="px-7 md:px-8 py-[12px] md:py-[14px] rounded-[40px] text-[13px] md:text-[15px] font-extrabold text-white shadow-[0_8px_30px_rgba(19,136,8,0.4)] cursor-pointer"
               style={{
                 background: "linear-gradient(135deg,#FF9933,#138808)",
@@ -271,7 +159,16 @@ items-center
         <div className="relative flex justify-center items-center mt-12 md:mt-0 h-[320px] sm:h-[360px] md:h-auto">
           {screens.map((screen, i) => {
             const isActive = i === activeScreen;
-            const offset = i - activeScreen;
+
+            let offset = i - activeScreen;
+
+            // Make the carousel circular
+            if (offset > screens.length / 2) {
+              offset -= screens.length;
+            }
+            if (offset < -screens.length / 2) {
+              offset += screens.length;
+            }
 
             return (
               <div
@@ -285,7 +182,11 @@ items-center
                   zIndex: isActive ? 10 : 5,
                 }}
               >
-                <PhoneMockup screen={screen} />
+                <img
+                  src={screen}
+                  alt={`Phone Mockup ${i + 1}`}
+                  className="w-[180px] sm:w-[220px] md:w-[280px] rounded-4xl border border-3 border-gray-200 lg:w-[320px] object-contain select-none pointer-events-none"
+                />
               </div>
             );
           })}
@@ -298,18 +199,17 @@ items-center
           <button
             key={i}
             onClick={() => setActiveScreen(i)}
-            className={`h-[8px] rounded-[4px] transition-all ${
-              i === activeScreen
-                ? "w-[24px] bg-[#FF9933]"
-                : "w-[8px] bg-[rgba(255,153,51,0.3)]"
-            }`}
+            className={`h-[8px] rounded-[4px] transition-all ${i === activeScreen
+              ? "w-[24px] bg-[#FF9933]"
+              : "w-[8px] bg-[rgba(255,153,51,0.3)]"
+              }`}
           />
         ))}
       </div>
       <RequestModal
-  isOpen={openRequestModal}
-  onClose={() => setOpenRequestModal(false)}
-/>
+        isOpen={openRequestModal}
+        onClose={() => setOpenRequestModal(false)}
+      />
     </section>
   );
 };

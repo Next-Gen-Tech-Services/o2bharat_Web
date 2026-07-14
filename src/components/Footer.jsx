@@ -120,7 +120,7 @@ const Footer = () => {
                 href="/support"
                 className="text-[#0A2A66] text-[13px] hover:text-[#FF9933] transition"
               >
-                Support
+                Contact Us
               </a>
 
                <a

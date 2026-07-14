@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { membershipPlans } from "../components/data/Module";
 import { FaWhatsapp } from "react-icons/fa";
-import RequestModal from "./RequestModal";
 
 import Phone1 from "../../public/o2bApp1.png";
 import Phone2 from "../../public/o2bApp2.png";
 import Phone3 from "../../public/o2bApp3.png";
 import Phone4 from "../../public/o2bApp4.png";
 import Phone5 from "../../public/o2bApp5.png";
+import { useNavigate } from "react-router-dom";
+
+
 
 const ProfileScreen = () => (
   <>
@@ -48,7 +50,8 @@ const ProfileScreen = () => (
 const MatrimonialSection = () => {
   const [activeScreen, setActiveScreen] = useState(1);
   const screens = [Phone1, Phone2, Phone3, Phone4, Phone5];
-  const [openRequestModal, setOpenRequestModal] = useState(false);
+
+  const router = useNavigate();
 
   return (
     <section
@@ -144,7 +147,13 @@ items-center
             </a> */}
 
             <button
-              onClick={() => setOpenRequestModal(true)}
+              onClick={() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                });
+                router("/support");
+              }}
               className="px-7 md:px-8 py-[12px] md:py-[14px] rounded-[40px] text-[13px] md:text-[15px] font-extrabold text-white shadow-[0_8px_30px_rgba(19,136,8,0.4)] cursor-pointer"
               style={{
                 background: "linear-gradient(135deg,#FF9933,#138808)",
@@ -206,10 +215,6 @@ items-center
           />
         ))}
       </div>
-      <RequestModal
-        isOpen={openRequestModal}
-        onClose={() => setOpenRequestModal(false)}
-      />
     </section>
   );
 };

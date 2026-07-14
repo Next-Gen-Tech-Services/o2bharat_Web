@@ -50,6 +50,13 @@ const ApiRoutes = {
       Method: HttpMethod.Get,
     }
   },
+
+  Contact: {
+    RaiseRequest: {
+      Endpoint: "/user/raise-ticket",
+      Method: HttpMethod.Post,
+    }
+  }
 };
 
 export default ApiRoutes;

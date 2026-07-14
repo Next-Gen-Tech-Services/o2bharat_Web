@@ -1,6 +1,11 @@
 import React, { useState } from "react";
+import ContactApi from "../../apis/contactApi/contact.api";
+import { toast } from "react-toastify";
 
 const Support = () => {
+
+  const contactApi = new ContactApi();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -8,6 +13,8 @@ const Support = () => {
     subject: "",
     message: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,22 +25,41 @@ const Support = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(formData);
+    try {
+      setLoading(true);
 
-    // TODO: Call your API here
+      const payload = {
+        subject: formData.subject,
+        message: formData.message,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.number,
+      };
 
-    alert("Your request has been submitted successfully.");
+      const response = await contactApi.submitFamilyForm(payload);
 
-    setFormData({
-      name: "",
-      email: "",
-      number: "",
-      subject: "",
-      message: "",
-    });
+      if (response?.status === 200 || response?.success) {
+        toast.success("Your request has been submitted successfully.");
+
+        setFormData({
+          name: "",
+          email: "",
+          number: "",
+          subject: "",
+          message: "",
+        });
+      } else {
+        toast.error(response?.data?.message || "Something went wrong.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -168,13 +194,14 @@ const Support = () => {
             {/* Button */}
             <button
               type="submit"
+              disabled={loading}
               className="w-full py-4 rounded-xl text-white text-lg font-semibold transition hover:scale-[1.01]"
               style={{
                 background:
                   "linear-gradient(135deg,#FF9933 0%, #138808 100%)",
               }}
             >
-              Submit Request
+              {loading ? "Submitting..." : "Submit Request"}
             </button>
           </form>
         </div>

@@ -427,7 +427,6 @@ const FamilySurveyHindi = () => {
                 headSubCasteId: selectedSubCasteId,
                 headGotraId: gotraId,
                 headDob: familyHead.dob,
-                headAge: Number(familyHead.age) || 0,
                 headMobile: familyHead.mobile,
                 headEmail: familyHead.email,
                 headNativePlace: familyHead.nativePlace,
@@ -445,8 +444,6 @@ const FamilySurveyHindi = () => {
                             : "FEMALE",
 
                     dob: member.dob,
-
-                    age: Number(member.age) || 0,
 
                     maritalStatus:
                         member.maritalStatus || "UNMARRIED",

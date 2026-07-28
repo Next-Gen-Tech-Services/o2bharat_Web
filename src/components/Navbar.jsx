@@ -106,7 +106,9 @@ const Navbar = () => {
 
           {/* Download App Button */}
           <a
-            href="#join"
+            href="https://play.google.com/store/apps/details?id=com.app.o2bharat"
+            target="_blank"
+            rel="noopener noreferrer"
             className="px-6 py-2.5 rounded-full font-bold text-[14px] transition flex items-center gap-2 text-white"
             style={{
               background: "linear-gradient(135deg,#FF9933,#138808)"
@@ -150,7 +152,9 @@ const Navbar = () => {
           ))}
 
           <a
-            href="#join"
+            href="https://play.google.com/store/apps/details?id=com.app.o2bharat"
+            target="_blank"
+            rel="noopener noreferrer"
             className="px-5 py-3 rounded-full font-bold text-white flex items-center gap-2"
             style={{ background: "linear-gradient(135deg,#FF9933,#138808)" }}
           >

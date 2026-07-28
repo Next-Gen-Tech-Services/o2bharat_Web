@@ -127,7 +127,9 @@ items-center
           {/* Buttons */}
           <div className="flex  flex-row  md:gap-4 gap-4">
             <a
-              href="#join"
+              href="https://play.google.com/store/apps/details?id=com.app.o2bharat"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-7 md:px-8 py-[12px] md:py-[14px] rounded-[40px] text-[13px] md:text-[15px] font-extrabold text-white shadow-[0_8px_30px_rgba(19,136,8,0.4)]"
               style={{
                 background: "linear-gradient(135deg,#FF9933,#138808)",

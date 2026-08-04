@@ -56,6 +56,13 @@ const ApiRoutes = {
       Endpoint: "/user/raise-ticket",
       Method: HttpMethod.Post,
     }
+  },
+
+  CMS: {
+    GetContent: {
+      Endpoint: "/user/get-terms",
+      Method: HttpMethod.Get,
+    }
   }
 };
 

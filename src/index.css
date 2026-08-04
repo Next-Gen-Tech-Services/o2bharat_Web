@@ -63,6 +63,48 @@ body {
 }
 
 /* ============================================
+   CMS CONTENT STYLES & OVERFLOW FIXES
+============================================ */
+
+.cms-content {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.cms-content * {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.cms-content img,
+.cms-content iframe,
+.cms-content video,
+.cms-content table {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+.cms-content table {
+  display: block;
+  overflow-x: auto;
+}
+
+.cms-content .ql-align-justify {
+  text-align: justify;
+}
+
+.cms-content .ql-align-center {
+  text-align: center;
+}
+
+.cms-content .ql-align-right {
+  text-align: right;
+}
+
+/* ============================================
    FONTS
 ============================================ */
 

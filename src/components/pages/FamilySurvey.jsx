@@ -8,6 +8,22 @@ import agarwalBg from "../../../public/Agarwal_bg.png";
 import defaultBgForm from "../../../public/default-bg-form.png"
 
 
+const RELATION_OPTIONS = [
+    "Wife",
+    "Son",
+    "Daughter",
+    "Father",
+    "Mother",
+    "Brother",
+    "Sister",
+    "Daughter in law",
+    "Brother in law",
+    "Grandson",
+    "Granddaughter",
+    "Sister in law",
+    "Nephew",
+];
+
 const FamilySurvey = () => {
     const [step, setStep] = useState(1);
     const [isConfirmed, setIsConfirmed] = useState(false);
@@ -1604,13 +1620,28 @@ const FamilySurvey = () => {
 
                                 <div>
                                     <label className={labelClass}>Relation With Head</label>
-                                    <input value={m.relation}
-                                        onChange={(e) => {
-                                            const updated = [...members];
-                                            updated[index].relation = e.target.value;
-                                            setMembers(updated);
-                                        }} placeholder="Enter Relation With Head"
-                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
+                                    <div className="relative">
+                                        <select
+                                            value={m.relation}
+                                            onChange={(e) => {
+                                                const updated = [...members];
+                                                updated[index].relation = e.target.value;
+                                                setMembers(updated);
+                                            }}
+                                            className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
+                                        >
+                                            <option value="">Select Relation With Head</option>
+                                            {RELATION_OPTIONS.map((option) => (
+                                                <option key={option} value={option}>
+                                                    {option}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <FaChevronDown
+                                            size={14}
+                                            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         ))}

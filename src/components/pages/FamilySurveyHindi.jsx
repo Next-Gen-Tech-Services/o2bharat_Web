@@ -7,6 +7,22 @@ import { useNavigate } from "react-router-dom";
 import agarwalBg from "../../../public/Agarwal_bg.png";
 import defaultBgForm from "../../../public/default-bg-form.png"
 
+const RELATION_OPTIONS = [
+    { value: "Wife", label: "पत्नी (Wife)" },
+    { value: "Son", label: "बेटा / पुत्र (Son)" },
+    { value: "Daughter", label: "बेटी / पुत्री (Daughter)" },
+    { value: "Father", label: "पिता (Father)" },
+    { value: "Mother", label: "माता (Mother)" },
+    { value: "Brother", label: "भाई (Brother)" },
+    { value: "Sister", label: "बहन (Sister)" },
+    { value: "Daughter in law", label: "बहू (Daughter in law)" },
+    { value: "Brother in law", label: "जीजा / साला / देवर / जेठ (Brother in law)" },
+    { value: "Grandson", label: "पोता / नाती (Grandson)" },
+    { value: "Granddaughter", label: "पोती / नातिन (Granddaughter)" },
+    { value: "Sister in law", label: "भाभी / साली / ननद (Sister in law)" },
+    { value: "Nephew", label: "भतीजा / भांजा (Nephew)" },
+];
+
 const FamilySurveyHindi = () => {
     const [step, setStep] = useState(1);
     const [isConfirmed, setIsConfirmed] = useState(false);
@@ -1623,13 +1639,28 @@ const FamilySurveyHindi = () => {
 
                                 <div>
                                     <label className={labelClass}>परिवार प्रमुख से संबंध</label>
-                                    <input value={m.relation}
-                                        onChange={(e) => {
-                                            const updated = [...members];
-                                            updated[index].relation = e.target.value;
-                                            setMembers(updated);
-                                        }} placeholder="परिवार प्रमुख से संबंध दर्ज करें"
-                                        className="w-full border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10" />
+                                    <div className="relative">
+                                        <select
+                                            value={m.relation}
+                                            onChange={(e) => {
+                                                const updated = [...members];
+                                                updated[index].relation = e.target.value;
+                                                setMembers(updated);
+                                            }}
+                                            className="w-full appearance-none border border-[#bec1c6] rounded-2xl px-4 py-4 outline-none transition focus:border-[#FF9933] focus:ring-4 focus:ring-[#FF9933]/10"
+                                        >
+                                            <option value="">परिवार प्रमुख से संबंध चुनें</option>
+                                            {RELATION_OPTIONS.map((option) => (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <FaChevronDown
+                                            size={14}
+                                            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -1857,7 +1888,7 @@ const FamilySurveyHindi = () => {
                                         {member.gender === "MALE" ? "पुरुष" : "महिला"}
                                     </p>
                                     <p><strong>आयु:</strong> {member.age}</p>
-                                    <p><strong>रिश्ता:</strong> {member.relation}</p>
+                                    <p><strong>रिश्ता:</strong> {RELATION_OPTIONS.find(r => r.value === member.relation)?.label || member.relation}</p>
                                     <p><strong>शिक्षा:</strong> {member.education}</p>
                                     <p><strong>व्यवसाय:</strong> {member.occupation}</p>
                                 </div>

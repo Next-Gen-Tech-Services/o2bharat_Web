@@ -90,7 +90,9 @@ const DynamicCMSContent = ({ slug, fallbackTitle = "" }) => {
 
           <div
             className="cms-content prose max-w-none text-gray-700 leading-relaxed break-words overflow-x-hidden"
-            dangerouslySetInnerHTML={{ __html: data.content || "" }}
+            dangerouslySetInnerHTML={{
+              __html: (data.content || "").replace(/&nbsp;/g, " ")
+            }}
           />
         </div>
       </div>

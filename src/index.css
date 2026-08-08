@@ -94,6 +94,7 @@ body {
 
 .cms-content .ql-align-justify {
   text-align: justify;
+  text-align-last: left;
 }
 
 .cms-content .ql-align-center {
@@ -102,6 +103,60 @@ body {
 
 .cms-content .ql-align-right {
   text-align: right;
+}
+
+/* Formatted typography and lists for CMS dynamic HTML */
+.cms-content ul {
+  list-style-type: disc !important;
+  padding-left: 1.75rem !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.cms-content ol {
+  list-style-type: decimal !important;
+  padding-left: 1.75rem !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.cms-content li {
+  display: list-item !important;
+  margin-bottom: 0.35rem !important;
+  padding-left: 0.25rem !important;
+}
+
+.cms-content ul ul {
+  list-style-type: circle !important;
+}
+
+.cms-content ol ol {
+  list-style-type: lower-latin !important;
+}
+
+.cms-content p {
+  margin-bottom: 0.75rem;
+}
+
+.cms-content h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.cms-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.cms-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 /* ============================================
